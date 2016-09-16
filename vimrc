@@ -130,20 +130,16 @@ map <DOWN> <C-Y>
 
 " move lines
 if has("macunix")
-    noremap ∆ :m+<CR>==
-    nnoremap ˚ :m-2<CR>==
-    inoremap ∆  <Esc>:m+<CR>==gi
-    inoremap ˚ <Esc>:m-2<CR>==gi
-    vnoremap ∆ :m'>+<CR>gv=gv
-    vnoremap ˚ :m-2<CR>gv=gv
-else
-    noremap <A-j> :m+<CR>==
-    nnoremap <A-k> :m-2<CR>==
-    inoremap <A-j> <Esc>:m+<CR>==gi
-    inoremap <A-k> <Esc>:m-2<CR>==gi
-    vnoremap <A-j> :m'>+<CR>gv=gv
-    vnoremap <A-k> :m-2<CR>gv=gv
+    execute "set <A-j>=\ej"
+    execute "set <A-k>=\ek"
 endif
+
+noremap <A-j> :m+<CR>==
+nnoremap <A-k> :m-2<CR>==
+inoremap <A-j> <Esc>:m+<CR>==gi
+inoremap <A-k> <Esc>:m-2<CR>==gi
+vnoremap <A-j> :m'>+<CR>gv=gv
+vnoremap <A-k> :m-2<CR>gv=gv
 
 " multiple indentation/deindentation in visual mode
 vnoremap < <gv
@@ -188,7 +184,7 @@ Plug 'vim-scripts/YankRing.vim'
 Plug 'kana/vim-fakeclip'
 Plug 'Shougo/neocomplete.vim'
 Plug 'tmhedberg/matchit'
-Plug 'haya14busa/incsearch.vim'
+"Plug 'haya14busa/incsearch.vim'
 
 "Plug 'snipMate'
 "Plug 'ctrlpvim/ctrlp.vim'
@@ -305,9 +301,9 @@ let g:DeleteTrailingWhitespace_Action = 'delete'
 " Add spaces after comment delimiters by default
 let g:NERDSpaceDelims = 1
 
-" incsearch
-map /  <Plug>(incsearch-forward)
-map ?  <Plug>(incsearch-backward)
+" " incsearch
+" map /  <Plug>(incsearch-forward)
+" map ?  <Plug>(incsearch-backward)
 
 " MRU
-let MRU_File = '~/.vim/vim_mru_files'
+let MRU_File = $HOME . '/.vim/vim_mru_files'
