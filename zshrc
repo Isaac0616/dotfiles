@@ -3,7 +3,7 @@ if (( $COLUMNS < 120 )); then
     cowsay -W 30 -f ~/.motd/programer.cow "The force is with those who read the source."
 else
     MOTD=$HOME/.motd
-    cat $MOTD/$(ls $MOTD | gshuf -n 1) | cowsay -n -f programer
+    cat $MOTD/$(ls $MOTD | gshuf -n 1) | cowsay -n -f ~/.motd/programer.cow
 fi
 
 # antigen
