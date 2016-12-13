@@ -166,7 +166,7 @@ endif
 call plug#begin('~/.vim/plugged')
 
 Plug 'scrooloose/nerdcommenter'
-Plug 'altercation/vim-colors-solarized'
+Plug 'Isaac0616/vim-colors-solarized'
 Plug 'lazywei/vim-doc-tw'
 Plug 'scrooloose/syntastic'
 Plug 'kshenoy/vim-signature'
