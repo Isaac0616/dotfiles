@@ -77,7 +77,7 @@ export EDITOR='vim'
 #autoload run-help
 #HELPDIR=/usr/local/share/zsh/help
 
-alias ls='ls -F'
+alias ls='ls -FH'
 alias ll='ls -Fla'
 alias rm='rm -i'
 alias cp='cp -i'
