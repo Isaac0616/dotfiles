@@ -201,7 +201,7 @@ call plug#end()
 syntax on
 set background=dark
 let g:solarized_termcolors=16
-colorscheme solarized
+silent! colorscheme solarized
 hi CursorLineNr ctermbg=0 ctermfg=10
 
 " airline
