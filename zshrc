@@ -1,13 +1,20 @@
+OS=$(uname)
+
+if [[ $OS == "Linux" ]]; then
+    alias gls='ls'
+    alias gshuf='shuf'
+fi
+
 # print welcome message
 if (( $COLUMNS < 120 )); then
     cowsay -W 30 -f ~/.motd/programer.cow "The force is with those who read the source."
 else
     MOTD=$HOME/.motd
-    cat $MOTD/$(ls $MOTD | gshuf -n 1) | cowsay -n -f ~/.motd/programer.cow
+    cat $MOTD/$(gls -I programer.cow $MOTD | gshuf -n 1) | cowsay -n -f ~/.motd/programer.cow
 fi
 
 # antigen
-source /Users/Isaac/.antigen/antigen.zsh
+source ~/.antigen/antigen.zsh
 
 # Load the oh-my-zsh's library.
 antigen use oh-my-zsh
@@ -82,12 +89,8 @@ alias ll='ls -Fla'
 alias rm='rm -i'
 alias cp='cp -i'
 alias mv='mv -i'
-alias mysqlstart='sudo /Library/StartupItems/MySQLCOM/MySQLCOM start'
-alias mysqlrestart='sudo /Library/StartupItems/MySQLCOM/MySQLCOM restart'
-alias mysqlstop='sudo /Library/StartupItems/MySQLCOM/MySQLCOM stop'
 alias tar="tar --exclude='.DS_Store'"
 alias myip='echo "Public IP: $(dig +short myip.opendns.com @resolver1.opendns.com)"; echo "Private IP: $(ipconfig getifaddr en0)"'
-alias html2pdf='wkhtmltopdf'
 alias fucking='sudo'
 alias svim='sudo vim'
 
@@ -121,15 +124,36 @@ man() {
     man "$@"
 }
 
+# toggle ASLE
+if [[ $OS == "Linux" ]]; then
+    aslr() {
+      if [[ $1 == "off" ]]; then
+          echo 0 | sudo tee /proc/sys/kernel/randomize_va_space > /dev/null
+      elif [[ $1 == "on" ]]; then
+          echo 2 | sudo tee /proc/sys/kernel/randomize_va_space > /dev/null
+      fi
+
+      if [[ $(cat /proc/sys/kernel/randomize_va_space) == "0" ]]; then
+          echo "off"
+      elif [[ $(cat /proc/sys/kernel/randomize_va_space) == "2" ]]; then
+          echo "on"
+      elif [[ $(cat /proc/sys/kernel/randomize_va_space) == "1" ]]; then
+          echo "partial"
+      fi
+    }
+fi
+
 #environment variables
-export PATH=/usr/local/bin:/usr/local/sbin:/usr/local/mysql/bin:/usr/local/gradle-1.9/bin:$PATH:.
+export PATH=/usr/local/bin:/usr/local/sbin:$PATH:.
 export LC_CTYPE=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 
 # disable special creation/extraction of ._* files by tar, etc. on Mac OS X
-COPYFILE_DISABLE=1; export COPYFILE_DISABLE
+export COPYFILE_DISABLE=1
 
-export SHELL=/usr/local/bin/zsh
+if [[ $OS == "Darwin" ]]; then
+    export SHELL=/usr/local/bin/zsh
+fi
 
 #color
 export CLICOLOR=1
@@ -138,4 +162,6 @@ export LSCOLORS=FxfxbEaEBxxEhEhBaDaCaD
 
 # nvm
 export NVM_DIR=~/.nvm
-source $(brew --prefix nvm)/nvm.sh
+if [[ $OS == "Darwin" ]]; then
+    source $(brew --prefix nvm)/nvm.sh
+fi
