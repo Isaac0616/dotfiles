@@ -45,11 +45,11 @@ set viminfo+=n~/.vim/viminfo
 let mapleader = ","
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                       auto save and restore folding                          "
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-autocmd BufWinLeave *.* mkview!
-autocmd BufWinEnter *.* silent loadview
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"                      auto save and restore folding                          "
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+autocmd BufWinLeave *.* if !&previewwindow | mkview! | endif
+autocmd BufWinEnter *.* if !&previewwindow | silent loadview | endif
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -72,6 +72,9 @@ map <silent> <F6> :TagbarToggle<cr>
 
 " toggle highlight search
 noremap <F8> :set hlsearch! hlsearch?<CR>
+
+" toogle paste mode
+noremap <F2> :set paste! paste?<CR>
 
 " folding
 nmap <silent> <leader>izf vi}zf%<CR>
@@ -152,6 +155,9 @@ map <leader>P "0P
 " cd to current file's directory
 nnoremap ,cd :cd %:p:h<CR>:pwd<CR>
 
+" Allow saving of files as sudo when I forgot to start vim using sudo.
+cmap w!! w !sudo tee > /dev/null %
+
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                  vim-plug                                    "
@@ -184,7 +190,13 @@ Plug 'vim-scripts/YankRing.vim'
 Plug 'kana/vim-fakeclip'
 Plug 'Shougo/neocomplete.vim'
 Plug 'tmhedberg/matchit'
-"Plug 'haya14busa/incsearch.vim'
+Plug 'Yggdroot/indentLine'
+Plug 'ntpeters/vim-better-whitespace'
+" Plug 'hari-rangarajan/CCTree'
+" Plug 'wesleyche/SrcExpl'
+" Plug 'abudden/taghighlight-automirror'
+" Plug 'xolox/vim-misc' | Plug 'xolox/vim-easytags'
+" Plug 'haya14busa/incsearch.vim'
 
 "Plug 'snipMate'
 "Plug 'ctrlpvim/ctrlp.vim'
@@ -205,6 +217,7 @@ silent! colorscheme solarized
 hi CursorLineNr ctermbg=0 ctermfg=10
 
 " airline
+" command: :AirlineToggleWhitespace
 set laststatus=2
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#enabled = 1
@@ -228,9 +241,13 @@ let g:syntastic_java_javac_config_file_enabled = 1
 "let g:syntastic_python_python_exe = 'python3'
 
 " ctags
+" command: ctags -R
+" command: ctags -R --fields=+l --c-kinds=+p --c++-kinds=+p
 set tags=./tags;
+nnoremap <F1> <C-W>}
 
 " cscope
+" cscope command: cscope -Rbq
 " cscope commands:
 " add  : Add a new database             (Usage: add file|dir [pre-path] [flags])
 " find : Query for a pattern            (Usage: find c|d|e|f|g|i|s|t name)
@@ -258,22 +275,22 @@ set tags=./tags;
 " endfunction
 " au BufEnter /* call LoadCscope()
 
-" if has('cscope')
-  " set cscopeverbose
+if has('cscope')
+  set cscopeverbose
 
   " if has('quickfix')
     " set cscopequickfix=g-,s-,c-,d-,i-,t-,e-
   " endif
 
-  " nmap <C-\>s :cs find s <C-R>=expand("<cword>")<CR><CR>
-  " nmap <C-\>g :cs find g <C-R>=expand("<cword>")<CR><CR>
-  " nmap <C-\>c :cs find c <C-R>=expand("<cword>")<CR><CR>
-  " nmap <C-\>t :cs find t <C-R>=expand("<cword>")<CR><CR>
-  " nmap <C-\>e :cs find e <C-R>=expand("<cword>")<CR><CR>
-  " nmap <C-\>f :cs find f <C-R>=expand("<cfile>")<CR><CR>
-  " nmap <C-\>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
-  " nmap <C-\>d :cs find d <C-R>=expand("<cword>")<CR><CR>
-" endif
+  nmap <C-\>s :cs find s <C-R>=expand("<cword>")<CR><CR>
+  nmap <C-\>g :cs find g <C-R>=expand("<cword>")<CR><CR>
+  nmap <C-\>c :cs find c <C-R>=expand("<cword>")<CR><CR>
+  nmap <C-\>t :cs find t <C-R>=expand("<cword>")<CR><CR>
+  nmap <C-\>e :cs find e <C-R>=expand("<cword>")<CR><CR>
+  nmap <C-\>f :cs find f <C-R>=expand("<cfile>")<CR><CR>
+  nmap <C-\>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+  nmap <C-\>d :cs find d <C-R>=expand("<cword>")<CR><CR>
+endif
 
 " neocomplcache
 let g:acp_enableAtStartup = 0
