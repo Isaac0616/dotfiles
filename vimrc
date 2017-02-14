@@ -192,6 +192,8 @@ Plug 'Shougo/neocomplete.vim'
 Plug 'tmhedberg/matchit'
 Plug 'Yggdroot/indentLine'
 Plug 'ntpeters/vim-better-whitespace'
+Plug 'mileszs/ack.vim'
+Plug 'ronakg/quickr-preview.vim'
 " Plug 'hari-rangarajan/CCTree'
 " Plug 'wesleyche/SrcExpl'
 " Plug 'abudden/taghighlight-automirror'
@@ -244,7 +246,7 @@ let g:syntastic_java_javac_config_file_enabled = 1
 " command: ctags -R
 " command: ctags -R --fields=+l --c-kinds=+p --c++-kinds=+p
 set tags=./tags;
-nnoremap <F1> <C-W>}
+nnoremap <F1> <C-W>g}
 
 " cscope
 " cscope command: cscope -Rbq
@@ -317,6 +319,10 @@ let g:DeleteTrailingWhitespace_Action = 'delete'
 " NERD Commenter
 " Add spaces after comment delimiters by default
 let g:NERDSpaceDelims = 1
+" use // for c language
+let g:NERDAltDelims_c = 1
+" use '#' instead of '# ' for python
+let g:NERDAltDelims_python = 1
 
 " " incsearch
 " map /  <Plug>(incsearch-forward)
@@ -324,3 +330,10 @@ let g:NERDSpaceDelims = 1
 
 " MRU
 let MRU_File = $HOME . '/.vim/vim_mru_files'
+
+" ack.vim
+if executable('ag')
+  let g:ackprg = 'ag --vimgrep'
+endif
+
+nnoremap <F3> :Ack! <cword> %<CR>
