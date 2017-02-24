@@ -59,6 +59,7 @@ autocmd FileType html setlocal shiftwidth=2 tabstop=2
 autocmd FileType pug setlocal shiftwidth=2 tabstop=2
 autocmd FileType javascript setlocal shiftwidth=2 tabstop=2
 autocmd BufRead,BufNewFile *.{md,mdown,mkd,mkdn,markdown,mdwn} let g:DeleteTrailingWhitespace=0
+autocmd FileType *.{md,mdown,mkd,mkdn,markdown,mdwn} setlocal spell spelllang=en_us
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -74,7 +75,7 @@ map <silent> <F6> :TagbarToggle<cr>
 noremap <F8> :set hlsearch! hlsearch?<CR>
 
 " toogle paste mode
-noremap <F2> :set paste! paste?<CR>
+noremap <F4> :set paste! paste?<CR>
 
 " folding
 nmap <silent> <leader>izf vi}zf%<CR>
@@ -190,7 +191,7 @@ Plug 'vim-scripts/YankRing.vim'
 Plug 'kana/vim-fakeclip'
 Plug 'Shougo/neocomplete.vim'
 Plug 'tmhedberg/matchit'
-Plug 'Yggdroot/indentLine'
+" Plug 'Yggdroot/indentLine'
 Plug 'ntpeters/vim-better-whitespace'
 Plug 'mileszs/ack.vim'
 Plug 'ronakg/quickr-preview.vim'
@@ -248,6 +249,7 @@ let g:syntastic_java_javac_config_file_enabled = 1
 " command: ctags -R --fields=+l --c-kinds=+p --c++-kinds=+p
 set tags=./tags;
 nnoremap <F1> <C-W>g}
+nnoremap <silent> <F2> :pclose<CR>
 
 " cscope
 " cscope command: cscope -Rbq
