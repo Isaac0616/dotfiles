@@ -1,9 +1,13 @@
 [user]
-	name = Isaac
-	email = b00902067@ntu.edu.tw
+	name = "Isaac Tseng"
+	email = "b00902067@ntu.edu.tw"
 [color]
 	ui = true
 [core]
 	editor = vim
 [alias]
 	lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+    st = status
+    cm = commit -m
+    dc  = diff --cached
+    rank = shortlog -sn --no-merges
