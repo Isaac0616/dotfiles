@@ -55,9 +55,7 @@ autocmd BufWinEnter *.* if !&previewwindow | silent loadview | endif
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                             file type specific                               "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-autocmd FileType html setlocal shiftwidth=2 tabstop=2
-autocmd FileType pug setlocal shiftwidth=2 tabstop=2
-autocmd FileType javascript setlocal shiftwidth=2 tabstop=2
+autocmd FileType html,pug,json,javascript,css setlocal shiftwidth=2 tabstop=2
 autocmd BufRead,BufNewFile *.{md,mdown,mkd,mkdn,markdown,mdwn} let g:DeleteTrailingWhitespace=0
 autocmd FileType *.{md,mdown,mkd,mkdn,markdown,mdwn} setlocal spell spelllang=en_us
 
@@ -184,7 +182,8 @@ Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'DeleteTrailingWhitespace'
 Plug 'digitaltoad/vim-pug'
-Plug 'jiangmiao/auto-pairs'
+" Plug 'jiangmiao/auto-pairs'
+Plug 'Raimondi/delimitMate'
 Plug 'vim-scripts/Tagbar'
 Plug 'mru.vim'
 Plug 'vim-scripts/YankRing.vim'
@@ -196,6 +195,8 @@ Plug 'ntpeters/vim-better-whitespace'
 Plug 'mileszs/ack.vim'
 Plug 'ronakg/quickr-preview.vim'
 Plug 'tpope/vim-surround'
+Plug 'terryma/vim-multiple-cursors'
+Plug 'ctrlpvim/ctrlp.vim'
 " Plug 'hari-rangarajan/CCTree'
 " Plug 'wesleyche/SrcExpl'
 " Plug 'abudden/taghighlight-automirror'
@@ -340,3 +341,9 @@ if executable('ag')
 endif
 
 nnoremap <F3> :Ack! <cword> %<CR>
+
+" delimitMate
+let g:delimitMate_expand_space = 1
+let g:delimitMate_expand_cr = 1
+let g:delimitMate_expand_inside_quotes = 1
+let g:delimitMate_nesting_quotes = ['"', '`', "'"]
