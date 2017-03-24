@@ -1,88 +1,35 @@
-OS=$(uname)
-
-if [[ $OS == "Linux" ]]; then
-    alias gls='ls'
-    alias gshuf='shuf'
-fi
-
-# print welcome message
-if (( $COLUMNS < 120 )); then
-    cowsay -W 30 -f ~/.motd/programer.cow "The force is with those who read the source."
-else
-    MOTD=$HOME/.motd
-    cat $MOTD/$(gls -I programer.cow $MOTD | gshuf -n 1) | cowsay -n -f ~/.motd/programer.cow
-fi
-
-# antigen
-source ~/.antigen/antigen.zsh
-
-# Load the oh-my-zsh's library.
-antigen use oh-my-zsh
-
-#antigen theme agnoster
-antigen theme Isaac0616/agnoster_mr agnoster_mr.zsh-theme
-
-antigen bundle git
-antigen bundle autojump
-#antigen bundle vi-mode
-
-antigen bundle zsh-users/zsh-syntax-highlighting
-#antigen bundle zsh-users/zsh-history-substring-search
-antigen bundle zsh-users/zsh-completions src
-#antigen bundle tarruda/zsh-autosuggestions
-
-# Tell antigen that you're done.
-antigen apply
-
-# vi mode
-bindkey -v
-
-# kill the lag
-export KEYTIMEOUT=1
-
-# allow ctrl-h, ctrl-w, ctrl-? for char and word deletion (standard behaviour)
-bindkey '^?' backward-delete-char
-bindkey '^h' backward-delete-char
-bindkey '^w' backward-kill-word
-
-bindkey '^R' history-incremental-search-backward
-bindkey -M vicmd '/' history-incremental-search-backward
-bindkey -M vicmd '?' history-incremental-search-forward
-
-# history substring-search
-#zmodload zsh/terminfo
-#bindkey "$terminfo[kcuu1]" history-substring-search-up
-#bindkey "$terminfo[kcud1]" history-substring-search-down
-#bindkey "^k" history-substring-search-up
-#bindkey "^j" history-substring-search-down
-
-
-# bind arrow key
-autoload -U up-line-or-beginning-search
-autoload -U down-line-or-beginning-search
-zle -N up-line-or-beginning-search
-zle -N down-line-or-beginning-search
-
-bindkey "\e[A" up-line-or-beginning-search
-bindkey "\e[B" down-line-or-beginning-search
-bindkey "\eOA" up-line-or-beginning-search
-bindkey "\eOB" down-line-or-beginning-search
-
-
-# why need this?
-#ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
-
-# auto-sugestion
-#zle-line-init() {
-    #zle autosuggest-start
-#}
-#zle -N zle-line-init
-
+################################################################################
+#                            environment variables                             #
+################################################################################
+export OS=$(uname)
+export PATH=/usr/local/bin:/usr/local/sbin:$PATH:.
+export LC_CTYPE=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
 export EDITOR='vim'
 
-#unalias run-help
-#autoload run-help
-#HELPDIR=/usr/local/share/zsh/help
+# disable special creation/extraction of ._* files by tar, etc. on Mac OS X
+export COPYFILE_DISABLE=1
+
+# solarized ls color
+export CLICOLOR=1
+export LSCOLORS=FxfxbEaEBxxEhEhBaDaCaD
+export LS_COLORS="di=1;35:ln=35:so=31;1;44:pi=30;1;44:ex=1;31:bd=0;1;44:cd=37;1;44:su=37;1;41:sg=30;1;43:tw=30;1;42:ow=30;1;43"
+
+if [[ $OS == "Darwin" ]]; then
+    export SHELL=/usr/local/bin/zsh
+fi
+
+################################################################################
+#                                   aliases                                    #
+################################################################################
+if [[ $OS == "Darwin" ]]; then
+    alias shuf='gshuf'
+fi
+
+alias -g ...='../..'
+alias -g ....='../../..'
+alias -g .....='../../../..'
+alias -g ......='../../../../..'
 
 alias ls='ls -FH'
 alias ll='ls -Fla'
@@ -91,27 +38,38 @@ alias cp='cp -i'
 alias mv='mv -i'
 alias tar="tar --exclude='.DS_Store'"
 alias myip='echo "Public IP: $(dig +short myip.opendns.com @resolver1.opendns.com)"; echo "Private IP: $(ipconfig getifaddr en0)"'
-alias fucking='sudo'
 alias svim='sudo vim'
+alias md='mkdir -p'
+alias pwn='ssh'
+alias :3='echo'
+alias tldr='less'
+alias fucking='sudo'
+alias j='fasd_cd -d'
+alias jj='fasd_cd -d -i'
 
+################################################################################
+#                                  functions                                   #
+################################################################################
+# shortcut for vagrant global-status
+vagrant() {
+    if [[ $@ == "gs" ]]; then
+        command vagrant global-status
+    else
+        command vagrant "$@"
+    fi
+}
+
+# mkdir and cd
 mcd() {
     mkdir "$@" && cd "$@"
 }
 
+# print current shell
 shell() {
     ps | grep -e "^`echo $$`" | awk '{ print $4 }'
 }
 
-ranger-cd() {
-    tempfile=$(mktemp /tmp/temp.XXXX)
-    ranger --choosedir="$tempfile" "${@:-$(pwd)}" < $TTY
-    test -f "$tempfile" &&
-        if [ "$(cat -- "$tempfile")" != "$(echo -n `pwd`)" ]; then
-            cd -- "$(cat "$tempfile")"
-        fi
-        rm -f -- "$tempfile"
-}
-
+# colorful man
 man() {
     env \
     LESS_TERMCAP_mb=$(printf "\e[1;31m") \
@@ -124,7 +82,7 @@ man() {
     man "$@"
 }
 
-# toggle ASLE
+# toggle ASLR
 if [[ $OS == "Linux" ]]; then
     aslr() {
       if [[ $1 == "off" ]]; then
@@ -143,25 +101,134 @@ if [[ $OS == "Linux" ]]; then
     }
 fi
 
-#environment variables
-export PATH=/usr/local/bin:/usr/local/sbin:$PATH:.
-export LC_CTYPE=en_US.UTF-8
-export LC_ALL=en_US.UTF-8
+# cross platform open command
+function o() {
+  emulate -L zsh
+  setopt shwordsplit
 
-# disable special creation/extraction of ._* files by tar, etc. on Mac OS X
-export COPYFILE_DISABLE=1
+  local open_cmd
 
-if [[ $OS == "Darwin" ]]; then
-    export SHELL=/usr/local/bin/zsh
+  # define the open command
+  case "$OSTYPE" in
+    darwin*)  open_cmd='open' ;;
+    cygwin*)  open_cmd='cygstart' ;;
+    linux*)   open_cmd='xdg-open' ;;
+    msys*)    open_cmd='start ""' ;;
+    *)        echo "Platform $OSTYPE not supported"
+              return 1
+              ;;
+  esac
+
+  # don't use nohup on OSX
+  if [[ "$OSTYPE" == darwin* ]]; then
+    $open_cmd "$@" &>/dev/null
+  else
+    nohup $open_cmd "$@" &>/dev/null
+  fi
+}
+
+################################################################################
+#                               welcome message                                #
+################################################################################
+if (( $COLUMNS < 120 )); then
+    cowsay -W 30 -f ~/.motd/programer.cow "The force is with those who read the source."
+else
+    MOTD=$HOME/.motd
+    cat $(ls $MOTD/force* | shuf -n 1) | cowsay -n -f ~/.motd/programer.cow
 fi
 
-#color
-export CLICOLOR=1
-#solarized
-export LSCOLORS=FxfxbEaEBxxEhEhBaDaCaD
+################################################################################
+#                                    zplug                                     #
+################################################################################
+source ~/.zplug/init.zsh
 
-# nvm
-export NVM_DIR=~/.nvm
-if [[ $OS == "Darwin" ]]; then
-    source $(brew --prefix nvm)/nvm.sh
+export NVM_LAZY_LOAD=true
+zplug "lukechilds/zsh-nvm"
+zplug "Isaac0616/emoticon-zsh-theme", as:theme
+zplug "zsh-users/zsh-completions"
+zplug "zsh-users/zsh-syntax-highlighting", defer:2
+zplug 'zplug/zplug', hook-build:'zplug --self-manage'
+
+# zplug load --verbose
+zplug load
+
+################################################################################
+#                                 zsh settings                                 #
+################################################################################
+## completion
+setopt auto_menu # show completion menu on successive tab press
+zstyle ':completion:*:*:*:*:*' menu select # highlight the selection
+
+# fuzzy completion
+# 0 -- vanilla completion (abc => abc)
+# 1 -- smart case completion (abc => Abc)
+# 2 -- word flex completion (abc => A-big-Car)
+# 3 -- full flex completion (abc => ABraCadabra)
+zstyle ':completion:*' matcher-list '' \
+  'm:{a-z\-}={A-Z\_}' \
+  'r:[^[:alpha:]]||[[:alpha:]]=** r:|=* m:{a-z\-}={A-Z\_}' \
+  'r:|?=** m:{a-z\-}={A-Z\_}'
+
+# use ls-colors for path eompletions
+function _set-list-colors() {
+	zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+	unfunction _set-list-colors
+}
+sched 0 _set-list-colors  # deferred since LC_COLORS might not be available yet
+
+## command history
+HISTFILE=$HOME/.zsh_history
+HISTSIZE=10000
+SAVEHIST=10000
+
+setopt append_history # append to history file instead of replacing it
+setopt extended_history # save each command’s beginning timestamp and the duration to the history file
+setopt hist_expire_dups_first # remove duplicated history first
+setopt hist_ignore_dups # don't put command into the history if they are duplicates of the previous event
+setopt inc_append_history # write to the history file immediately, not when the shell exits
+setopt share_history #  share history between all sessions
+
+## directories
+setopt auto_pushd # make cd push the old directory onto the directory stack
+setopt pushd_ignore_dups # don’t push multiple copies of the same directory onto the directory stack.
+setopt pushdminus # exchanges the meanings of '+' and '-' for pushd and popd
+
+## jobs
+setopt long_list_jobs # list jobs in the long format by default.
+
+## vi mode
+bindkey -v
+
+# kill the lag when switching mode
+export KEYTIMEOUT=1
+
+## bindkey
+bindkey '^R' history-incremental-search-backward
+bindkey -M vicmd '/' history-incremental-search-backward
+bindkey -M vicmd '?' history-incremental-search-forward
+
+# bind arrow key
+autoload -U up-line-or-beginning-search
+autoload -U down-line-or-beginning-search
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
+
+bindkey "\e[A" up-line-or-beginning-search
+bindkey "\e[B" down-line-or-beginning-search
+bindkey "\eOA" up-line-or-beginning-search
+bindkey "\eOB" down-line-or-beginning-search
+
+
+################################################################################
+#                                   plugins                                    #
+################################################################################
+# the fuck
+eval "$(thefuck --alias)"
+
+# fasd
+fasd_cache="$HOME/.fasd-init-zsh"
+if [ "$(command -v fasd)" -nt "$fasd_cache" -o ! -s "$fasd_cache" ]; then
+  fasd --init posix-alias zsh-hook zsh-ccomp zsh-ccomp-install zsh-wcomp zsh-wcomp-install >| "$fasd_cache"
 fi
+source "$fasd_cache"
+unset fasd_cache
