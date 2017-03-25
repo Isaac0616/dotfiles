@@ -1,3 +1,5 @@
+# zmodload zsh/zprof
+
 ################################################################################
 #                            environment variables                             #
 ################################################################################
@@ -9,6 +11,9 @@ export EDITOR='vim'
 
 # disable special creation/extraction of ._* files by tar, etc. on Mac OS X
 export COPYFILE_DISABLE=1
+
+# for "lukechilds/zsh-nvm"
+export NVM_LAZY_LOAD=true
 
 # solarized ls color
 export CLICOLOR=1
@@ -142,7 +147,6 @@ fi
 ################################################################################
 source ~/.zplug/init.zsh
 
-export NVM_LAZY_LOAD=true
 zplug "lukechilds/zsh-nvm"
 zplug "Isaac0616/emoticon-zsh-theme", as:theme
 zplug "zsh-users/zsh-completions"
@@ -151,6 +155,19 @@ zplug 'zplug/zplug', hook-build:'zplug --self-manage'
 
 # zplug load --verbose
 zplug load
+
+## manually load
+# source ~/.zplug/repos/lukechilds/zsh-nvm/zsh-nvm.plugin.zsh
+# source ~/.zplug/repos/Isaac0616/emoticon-zsh-theme/emoticon.zsh-theme
+# fpath=(~/.zplug/repos/zsh-users/zsh-completions/src $fpath)
+# autoload -Uz compinit
+# if [ $(date +'%j') != $(stat -f '%Sm' -t '%j' ~/.zcompdump) ]; then
+  # compinit
+# else
+  # compinit -C
+# fi
+# source ~/.zplug/repos/zsh-users/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
 
 ################################################################################
 #                                 zsh settings                                 #
@@ -223,7 +240,11 @@ bindkey "\eOB" down-line-or-beginning-search
 #                                   plugins                                    #
 ################################################################################
 # the fuck
-eval "$(thefuck --alias)"
+fuck () {
+    unset -f fuck
+    eval "$(thefuck --alias)"
+    eval fuck "$@"
+}
 
 # fasd
 fasd_cache="$HOME/.fasd-init-zsh"
