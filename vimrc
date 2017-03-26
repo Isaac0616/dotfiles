@@ -1,6 +1,7 @@
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                   basic                                      "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+filetype plugin on
 set nocompatible
 set number
 set autoindent
@@ -42,14 +43,15 @@ set backupdir=~/.vim/backup
 " viminfo lacation
 set viminfo+=n~/.vim/viminfo
 
+" Save cursor loation and folder setting.
+" Backslashes in file names replaced with forward slashes.
+" With Unix end-of-line format, even when on Windows or DOS.
+set viewoptions=cursor,folds,slash,unix
+
+" disable auto insert comment in new lines
+autocmd FileType * setlocal fo-=c fo-=r fo-=o
+
 let mapleader = ","
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                      auto save and restore folding                          "
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-autocmd BufWinLeave *.* if !&previewwindow | mkview! | endif
-autocmd BufWinEnter *.* if !&previewwindow | silent loadview | endif
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -197,6 +199,8 @@ Plug 'ronakg/quickr-preview.vim'
 Plug 'tpope/vim-surround'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'ctrlpvim/ctrlp.vim'
+Plug 'mhinz/vim-startify'
+Plug 'vim-scripts/restore_view.vim'
 " Plug 'hari-rangarajan/CCTree'
 " Plug 'wesleyche/SrcExpl'
 " Plug 'abudden/taghighlight-automirror'
@@ -347,3 +351,9 @@ let g:delimitMate_expand_space = 1
 let g:delimitMate_expand_cr = 1
 let g:delimitMate_expand_inside_quotes = 1
 let g:delimitMate_nesting_quotes = ['"', '`', "'"]
+
+" Startify
+hi StartifyHeader  ctermfg=2
+hi StartifyBracket ctermfg=10
+hi StartifyPath    ctermfg=10
+hi StartifySlash   ctermfg=10
