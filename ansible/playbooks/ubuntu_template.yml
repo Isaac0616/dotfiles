@@ -1,0 +1,171 @@
+- hosts: all
+  vars:
+    ansible_python_interpreter: "/usr/bin/python3"
+
+  tasks:
+    - name: Enable i386 architecture
+      become: true
+      command: dpkg --add-architecture i386
+
+    - name: Add additional ppa for vim
+      become: true
+      apt_repository:
+        repo: "ppa:jonathonf/vim"
+        update_cache: no
+
+    - name: Add additional ppa for tmux
+      become: true
+      apt_repository:
+        repo: "ppa:pi-rho/dev"
+        update_cache: no
+
+    - name: Add additional ppa for fasd
+      become: true
+      apt_repository:
+        repo: "ppa:aacebedo/fasd"
+        update_cache: no
+
+    - name: apt-get update
+      become: true
+      apt: update_cache=yes
+
+    - name: apt-get upgrade
+      become: true
+      apt: upgrade=dist
+      register: apt_get_result
+      retries: 5
+      until: apt_get_result | success
+      delay: 3
+
+    - name: Install packages
+      become: true
+      apt: name={{ item }} state=latest
+      with_items:
+        - python3
+        - python
+        - python3-pip
+        - python-pip
+        - tmux-next
+        - git
+        - curl
+        - gdb
+        - strace
+        - ltrace
+        - vim-nox
+        - zsh
+        - cowsay
+        - nmap
+        - htop
+        - fasd
+      register: apt_get_result
+      retries: 5
+      until: apt_get_result | success
+      delay: 3
+
+    - name: Install i386 libraries
+      become: true
+      apt: name={{ item }} state=latest
+      with_items:
+          - libc6:i386
+          - libc6-dbg:i386
+          - libncurses5:i386
+          - libstdc++6:i386
+          - libc6-dev-i386
+          - gcc-multilib
+          - g++-multilib
+      register: apt_get_result
+      retries: 5
+      until: apt_get_result | success
+      delay: 3
+
+    - name: Install Python3 packages
+      become: true
+      pip: name={{ item }} state=latest executable=pip3
+      with_items:
+        - pip
+        - ipython
+
+    - name: Install Python2 packages
+      become: true
+      pip: name={{ item }} state=latest executable=pip2
+      with_items:
+        - pip
+        - ipython
+
+    - name: git clone dotfiles
+      git:
+        repo: https://github.com/Isaac0616/dotfiles
+        dest: ~/.dotfiles
+
+    - name: Symlink dotfiles
+      file:
+        src: ~/.dotfiles/{{ item }}
+        dest: ~/.{{ item }}
+        state: link
+      with_items:
+        - gitconfig
+        - motd
+        - tmux.conf
+        - vimrc
+        - zshrc
+
+    - name: Create .vim folder structure
+      file:
+        path: ~/.vim/{{ item }}
+        state: directory
+      with_items:
+        - backup
+        - swap
+        - undodir
+        - view
+
+    - name: Install vim packages
+      command: /usr/bin/vim +PlugInstall +qa
+
+    - name: Install pwntools dependencies
+      become: true
+      apt: name={{ item }} state=latest
+      with_items:
+        - python-dev
+        - libssl-dev
+        - libffi-dev
+      register: apt_get_result
+      retries: 5
+      until: apt_get_result | success
+      delay: 3
+
+    - name: Install pwntools
+      become: true
+      pip: name=pwntools state=latest executable=pip2
+
+    - name: git clone pwndbg
+      git:
+        repo: https://github.com/pwndbg/pwndbg
+        dest: ~/pwndbg
+
+    - name: Install pwndbg
+      shell: ./setup.sh
+      args:
+        chdir: ~/pwndbg
+
+    - name: Install zplug
+      git:
+        repo: https://github.com/zplug/zplug
+        dest: ~/.zplug
+
+    # - name: Install zsh plugin
+      # shell: source ~/.zshrc < /dev/null && zplug install
+      # args:
+          # executable: /bin/zsh
+
+    - name: Configure user account
+      become: true
+      user:
+        name: ubuntu
+        password: $6$rounds=656000$GYd24Dh3CkkZ9qHJ$PZp51G4piQI2IYLoZIIIJEL9TDxjMLDRnkbYrK4k/mJM73IsEfm9QutpHsvFCsiKD6tXu/lDmg7lhpb4mAfsb1
+        shell: /bin/zsh
+
+    # - name: Configure hostname
+      # become: true
+      # hostname:
+        # name: Ubuntu-16_04
