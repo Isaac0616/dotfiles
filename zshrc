@@ -3,7 +3,7 @@
 ################################################################################
 #                             launch tmux when ssh                             #
 ################################################################################
-if [[ -z "$TMUX" ]] && [ -n "$SSH_CONNECTION" ] && which tmux >& /dev/null; then
+if [[ -z "$TMUX" ]] && [ -n "$SSH_CONNECTION" ] && [ -t 1 ] && which tmux >& /dev/null; then
     exec tmux new -As main
 fi
 
@@ -36,6 +36,10 @@ fi
 ################################################################################
 if [[ $OS == "Darwin" ]]; then
     alias shuf='gshuf'
+fi
+
+if [[ $OS == "Linux" ]]; then
+    alias tmux='tmux-next'
 fi
 
 alias -g ...='../..'
@@ -160,6 +164,13 @@ zplug "zsh-users/zsh-completions"
 zplug "zsh-users/zsh-syntax-highlighting", defer:2
 zplug 'zplug/zplug', hook-build:'zplug --self-manage'
 
+if ! zplug check --verbose; then
+    printf "Install? [y/N]: "
+    if read -q; then
+        echo; zplug install
+    fi
+fi
+
 # zplug load --verbose
 zplug load
 
@@ -254,6 +265,9 @@ fuck () {
 }
 
 # fasd
+if [[ $OS == "Darwin" ]]; then
+    export _FASD_BACKENDS="native spotlight"
+fi
 fasd_cache="$HOME/.fasd-init-zsh"
 if [ "$(command -v fasd)" -nt "$fasd_cache" -o ! -s "$fasd_cache" ]; then
   fasd --init posix-alias zsh-hook zsh-ccomp zsh-ccomp-install zsh-wcomp zsh-wcomp-install >| "$fasd_cache"
