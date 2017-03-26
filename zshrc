@@ -36,10 +36,14 @@ fi
 ################################################################################
 if [[ $OS == "Darwin" ]]; then
     alias shuf='gshuf'
+    alias ls='ls -FH'
+    alias ll='ls -Fla'
 fi
 
 if [[ $OS == "Linux" ]]; then
     alias tmux='tmux-next'
+    alias ls='ls --color=auto -FH'
+    alias ll='ls --color=auto -Fla'
 fi
 
 alias -g ...='../..'
@@ -47,8 +51,6 @@ alias -g ....='../../..'
 alias -g .....='../../../..'
 alias -g ......='../../../../..'
 
-alias ls='ls -FH'
-alias ll='ls -Fla'
 alias rm='rm -i'
 alias cp='cp -i'
 alias mv='mv -i'
