@@ -38,6 +38,8 @@ if [[ $OS == "Darwin" ]]; then
     alias shuf='gshuf'
     alias ls='ls -FH'
     alias ll='ls -Fla'
+    alias tab='open . -a iterm'
+    alias ssh='ssh -o "XAuthLocation=/opt/X11/bin/xauth"'
 fi
 
 if [[ $OS == "Linux" ]]; then
@@ -60,7 +62,7 @@ alias svim='sudo vim'
 alias md='mkdir -p'
 alias pwn='ssh'
 alias :3='echo'
-alias tldr='less'
+# alias tldr='less'
 alias fucking='sudo'
 alias j='fasd_cd -d'
 alias jj='fasd_cd -d -i'
@@ -276,3 +278,13 @@ if [ "$(command -v fasd)" -nt "$fasd_cache" -o ! -s "$fasd_cache" ]; then
 fi
 source "$fasd_cache"
 unset fasd_cache
+
+# tldr
+export TLDR_COLOR_BLANK="white"
+export TLDR_COLOR_NAME="cyan"
+export TLDR_COLOR_DESCRIPTION="white"
+export TLDR_COLOR_EXAMPLE="green"
+export TLDR_COLOR_COMMAND="red"
+export TLDR_COLOR_PARAMETER="white"
+export TLDR_CACHE_ENABLED=1
+export TLDR_CACHE_MAX_AGE=720
