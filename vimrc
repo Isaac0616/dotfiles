@@ -211,6 +211,7 @@ Plug 'vim-scripts/restore_view.vim'
 "Plug 'ctrlpvim/ctrlp.vim'
 "Plug 'Valloric/YouCompleteMe'
 "Plug 'tpope/vim-fugitive'
+" Plug 'edkolev/tmuxline.vim'
 
 call plug#end()
 
@@ -357,3 +358,15 @@ hi StartifyHeader  ctermfg=2
 hi StartifyBracket ctermfg=10
 hi StartifyPath    ctermfg=10
 hi StartifySlash   ctermfg=10
+
+" tmuxline
+" let g:tmuxline_preset = {
+      " \'a'    : '#S',
+      " \'win'  : '#I #W',
+      " \'cwin' : '#I #W',
+      " \'x'    : '%a',
+      " \'y'    : ['%Y-%m-%d', '%R'],
+      " \'z'    : '#H',
+      " \'options': {
+        " \'status-justify': 'left'}
+      " \}
