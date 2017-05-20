@@ -40,6 +40,7 @@ if [[ $OS == "Darwin" ]]; then
     alias ll='ls -Fla'
     alias tab='open . -a iterm'
     alias ssh='ssh -o "XAuthLocation=/opt/X11/bin/xauth"'
+    alias airport='/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport'
 fi
 
 if [[ $OS == "Linux" ]]; then
