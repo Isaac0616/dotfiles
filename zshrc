@@ -103,8 +103,20 @@ man() {
     man "$@"
 }
 
-# toggle ASLR
+if [[ $OS == "Darwin" ]]; then
+    # kill all chrome tabs
+    fuck-chrome() {
+        ps ux | \
+        grep '[C]hrome Helper --type=renderer' | \
+        grep -v extension-process | \
+        tr -s ' ' | \
+        cut -d ' ' -f2 | \
+        xargs kill
+    }
+fi
+
 if [[ $OS == "Linux" ]]; then
+    # toggle ASLR
     aslr() {
       if [[ $1 == "off" ]]; then
           echo 0 | sudo tee /proc/sys/kernel/randomize_va_space > /dev/null
