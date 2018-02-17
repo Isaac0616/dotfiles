@@ -14,12 +14,19 @@ set showmatch
 set backspace=indent,eol,start
 set iskeyword-=*
 set cursorline
+set lazyredraw
 set tabstop=4
 set shiftwidth=4
 set expandtab
 set incsearch
 set ignorecase
 set smartcase
+set hidden
+set colorcolumn=80
+
+" split
+" set splitbelow
+set splitright
 
 " disable comment continuation
 set formatoptions-=cro
@@ -91,8 +98,8 @@ nmap <silent> <leader>zf va}zf%<CR>
 "endfunction
 
 " toggle location list
-noremap <silent> <leader>lc :lcl<CR>
-noremap <silent> <leader>lo :lw<CR>
+" noremap <silent> <leader>lc :lcl<CR>
+" noremap <silent> <leader>lo :lw<CR>
 
 " tab shortcut
 map <leader>tn :tabnew<cr>
@@ -123,27 +130,27 @@ map <right> :call BufferOrTabNext()<CR>
 map <left> :call BufferOrTabPre()<CR>
 
 " move between spliting windows
-map <C-j> <C-W>j
-map <C-k> <C-W>k
-map <C-h> <C-W>h
-map <C-l> <C-W>l
+" map <C-j> <C-W>j
+" map <C-k> <C-W>k
+" map <C-h> <C-W>h
+" map <C-l> <C-W>l
 
 " move page
 map <UP> <C-E>
 map <DOWN> <C-Y>
 
 " move lines
-if has("macunix")
-    execute "set <A-j>=\ej"
-    execute "set <A-k>=\ek"
-endif
+" if has("macunix")
+    " execute "set <A-j>=\ej"
+    " execute "set <A-k>=\ek"
+" endif
 
-noremap <A-j> :m+<CR>==
-nnoremap <A-k> :m-2<CR>==
-inoremap <A-j> <Esc>:m+<CR>==gi
-inoremap <A-k> <Esc>:m-2<CR>==gi
-vnoremap <A-j> :m'>+<CR>gv=gv
-vnoremap <A-k> :m-2<CR>gv=gv
+" noremap <A-j> :m+<CR>==
+" nnoremap <A-k> :m-2<CR>==
+" inoremap <A-j> <Esc>:m+<CR>==gi
+" inoremap <A-k> <Esc>:m-2<CR>==gi
+" vnoremap <A-j> :m'>+<CR>gv=gv
+" vnoremap <A-k> :m-2<CR>gv=gv
 
 " multiple indentation/deindentation in visual mode
 vnoremap < <gv
@@ -174,11 +181,11 @@ call plug#begin('~/.vim/plugged')
 
 Plug 'scrooloose/nerdcommenter'
 Plug 'Isaac0616/vim-colors-solarized'
-Plug 'lazywei/vim-doc-tw'
-Plug 'scrooloose/syntastic'
+" Plug 'lazywei/vim-doc-tw'
+Plug 'w0rp/ale'
 Plug 'kshenoy/vim-signature'
 Plug 'mbbill/undotree'
-Plug 'scrooloose/nerdtree'
+Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
 Plug 'Lokaltog/vim-easymotion'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
@@ -186,22 +193,41 @@ Plug 'vim-scripts/DeleteTrailingWhitespace'
 Plug 'digitaltoad/vim-pug'
 " Plug 'jiangmiao/auto-pairs'
 Plug 'Raimondi/delimitMate'
-Plug 'vim-scripts/Tagbar'
+Plug 'majutsushi/tagbar'
+" Plug 'vim-scripts/Tagbar'
 Plug 'vim-scripts/mru.vim'
 Plug 'vim-scripts/YankRing.vim'
 Plug 'kana/vim-fakeclip'
-Plug 'Shougo/neocomplete.vim'
+" Plug 'Shougo/neocomplete.vim'
 Plug 'tmhedberg/matchit'
 " Plug 'Yggdroot/indentLine'
 Plug 'ntpeters/vim-better-whitespace'
 Plug 'mileszs/ack.vim'
-Plug 'ronakg/quickr-preview.vim'
+" Plug 'ronakg/quickr-preview.vim'
 Plug 'tpope/vim-surround'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'mhinz/vim-startify'
 Plug 'vim-scripts/restore_view.vim'
 Plug 'bronson/vim-visual-star-search'
+Plug 'yuttie/comfortable-motion.vim'
+Plug 'nathanaelkane/vim-indent-guides', { 'on': 'IndentGuidesToggle' }
+Plug 'matze/vim-move'
+Plug 'Valloric/ListToggle'
+Plug 'christoomey/vim-tmux-navigator'
+
+function! BuildYCM(info)
+  " info is a dictionary with 3 fields
+  " - name:   name of the plugin
+  " - status: 'installed', 'updated', or 'unchanged'
+  " - force:  set on PlugInstall! or PlugUpdate!
+  if a:info.status == 'installed' || a:info.force
+    !./install.py --clang-completer --js-completer
+  endif
+endfunction
+
+Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }
+
 " Plug 'hari-rangarajan/CCTree'
 " Plug 'wesleyche/SrcExpl'
 " Plug 'abudden/taghighlight-automirror'
@@ -209,8 +235,6 @@ Plug 'bronson/vim-visual-star-search'
 " Plug 'haya14busa/incsearch.vim'
 
 "Plug 'snipMate'
-"Plug 'ctrlpvim/ctrlp.vim'
-"Plug 'Valloric/YouCompleteMe'
 "Plug 'tpope/vim-fugitive'
 " Plug 'edkolev/tmuxline.vim'
 
@@ -226,6 +250,8 @@ set background=dark
 let g:solarized_termcolors=16
 silent! colorscheme solarized
 hi CursorLineNr ctermbg=0 ctermfg=10
+set fillchars+=vert:│
+hi VertSplit ctermbg=NONE guibg=NONE
 
 " airline
 " command: :AirlineToggleWhitespace
@@ -247,13 +273,10 @@ nnoremap <F7> :UndotreeToggle<cr>
 map <F9> :NERDTreeToggle<CR>
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
 
-" syntastic
-let g:syntastic_java_javac_config_file_enabled = 1
-"let g:syntastic_python_python_exe = 'python3'
-
 " ctags
 " command: ctags -R
 " command: ctags -R --fields=+l --c-kinds=+p --c++-kinds=+p
+" Use g] instead of C-] to get the list of all matches
 set tags=./tags;
 nnoremap <F1> <C-W>g}
 nnoremap <silent> <F2> :pclose<CR>
@@ -305,15 +328,15 @@ if has('cscope')
 endif
 
 " neocomplcache
-let g:acp_enableAtStartup = 0
-let g:neocomplete#enable_at_startup = 1
-let g:neocomplete#enable_smart_case = 1
-let g:neocomplete#enable_auto_select = 1
-inoremap <expr><Tab>
-\ neocomplete#complete_common_string() != '' ?
-\   neocomplete#complete_common_string() :
-\ pumvisible() ? "\<C-n>" : "\<Tab>"
-set completeopt-=preview
+" let g:acp_enableAtStartup = 0
+" let g:neocomplete#enable_at_startup = 1
+" let g:neocomplete#enable_smart_case = 1
+" let g:neocomplete#enable_auto_select = 1
+" inoremap <expr><Tab>
+" \ neocomplete#complete_common_string() != '' ?
+" \   neocomplete#complete_common_string() :
+" \ pumvisible() ? "\<C-n>" : "\<Tab>"
+" set completeopt-=preview
 " <C-h>, <BS>: close popup and delete backword char.
 "inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
 "inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
@@ -371,3 +394,34 @@ hi StartifySlash   ctermfg=10
       " \'options': {
         " \'status-justify': 'left'}
       " \}
+
+" ale
+let g:ale_python_flake8_executable = 'python2'
+let g:ale_python_flake8_options = '-m flake8'
+let g:ale_lint_on_enter = 0
+let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+let g:ale_sign_error = '•'
+let g:ale_sign_warning = '•'
+" let g:ale_lint_on_text_changed = 'never'
+
+let g:ale_linters = {
+\   'python': ['flake8'],
+\}
+
+" YouCompleteMe
+let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
+let g:ycm_show_diagnostics_ui = 0
+let g:ycm_complete_in_comments = 1
+let g:ycm_collect_identifiers_from_comments_and_strings = 1
+let g:ycm_seed_identifiers_with_syntax = 1
+let g:ycm_add_preview_to_completeopt = 1
+let g:ycm_autoclose_preview_window_after_completion = 1
+let g:ycm_autoclose_preview_window_after_insertion = 1
+let g:ycm_semantic_triggers = {
+\ 'c,cpp,python,javascript': [ 're!\w{1}' ]
+\}
+
+" vim-indent-guides
+nmap <silent> <Leader>ig :IndentGuidesToggle<CR>
+let g:indent_guides_guide_size = 1
+let g:indent_guides_start_level = 2
