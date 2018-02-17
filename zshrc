@@ -4,7 +4,7 @@
 #                             launch tmux when ssh                             #
 ################################################################################
 if [[ -z "$TMUX" ]] && [ -n "$SSH_CONNECTION" ] && [ -t 1 ] && which tmux >& /dev/null; then
-    exec tmux new -As main
+    exec tmux-next new -As main
 fi
 
 ################################################################################
