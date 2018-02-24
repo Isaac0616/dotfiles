@@ -23,6 +23,7 @@ set ignorecase
 set smartcase
 set hidden
 set colorcolumn=80
+set completeopt-=preview
 
 " split
 " set splitbelow
@@ -215,6 +216,9 @@ Plug 'nathanaelkane/vim-indent-guides', { 'on': 'IndentGuidesToggle' }
 Plug 'matze/vim-move'
 Plug 'Valloric/ListToggle'
 Plug 'christoomey/vim-tmux-navigator'
+Plug 'rdnetto/YCM-Generator', { 'branch': 'stable' }
+Plug 'jsfaint/gen_tags.vim'
+Plug 'vim-scripts/Mark--Karkat'
 
 function! BuildYCM(info)
   " info is a dictionary with 3 fields
@@ -278,7 +282,7 @@ autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTree
 " command: ctags -R --fields=+l --c-kinds=+p --c++-kinds=+p
 " Use g] instead of C-] to get the list of all matches
 set tags=./tags;
-nnoremap <F1> <C-W>g}
+nnoremap <F1> <C-W>}
 nnoremap <silent> <F2> :pclose<CR>
 
 " cscope
@@ -313,9 +317,9 @@ nnoremap <silent> <F2> :pclose<CR>
 if has('cscope')
   set cscopeverbose
 
-  " if has('quickfix')
-    " set cscopequickfix=g-,s-,c-,d-,i-,t-,e-
-  " endif
+  if has('quickfix')
+    set cscopequickfix=s-,c-,d-,i-,t-,e-
+  endif
 
   nmap <C-\>s :cs find s <C-R>=expand("<cword>")<CR><CR>
   nmap <C-\>g :cs find g <C-R>=expand("<cword>")<CR><CR>
@@ -414,14 +418,19 @@ let g:ycm_show_diagnostics_ui = 0
 let g:ycm_complete_in_comments = 1
 let g:ycm_collect_identifiers_from_comments_and_strings = 1
 let g:ycm_seed_identifiers_with_syntax = 1
-let g:ycm_add_preview_to_completeopt = 1
-let g:ycm_autoclose_preview_window_after_completion = 1
-let g:ycm_autoclose_preview_window_after_insertion = 1
+let g:ycm_max_num_candidates = 20
 let g:ycm_semantic_triggers = {
-\ 'c,cpp,python,javascript': [ 're!\w{1}' ]
+\ 'c,cpp,python,javascript': [ 're!\w{2}' ]
 \}
 
 " vim-indent-guides
 nmap <silent> <Leader>ig :IndentGuidesToggle<CR>
 let g:indent_guides_guide_size = 1
 let g:indent_guides_start_level = 2
+
+" gen_tags
+let g:gen_tags#gtags_auto_gen = 1
+
+" Mark--Karkat
+nmap <Plug>NoMarkSearchCurrentPrev <Plug>MarkSearchCurrentPrev
+nmap <Plug>NoMarkSearchCurrentNext <Plug>MarkSearchCurrentNext
