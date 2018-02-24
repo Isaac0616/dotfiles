@@ -31,6 +31,10 @@ if [[ $OS == "Darwin" ]]; then
     export SHELL=/usr/local/bin/zsh
 fi
 
+if [[ $OS == "Linux" ]]; then
+    export LD_LIBRARY_PATH=/lib:/usr/lib:/usr/local/lib
+fi
+
 ################################################################################
 #                                   aliases                                    #
 ################################################################################
