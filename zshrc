@@ -45,6 +45,8 @@ if [[ $OS == "Darwin" ]]; then
     alias tab='open . -a iterm'
     alias ssh='ssh -o "XAuthLocation=/opt/X11/bin/xauth"'
     alias airport='/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport'
+    alias fuck-mac='find . -name ".DS_Store" -type f -delete'
+    alias python=python2
 fi
 
 if [[ $OS == "Linux" ]]; then
@@ -227,8 +229,8 @@ zstyle ':completion:*' matcher-list '' \
 
 # use ls-colors for path eompletions
 function _set-list-colors() {
-	zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
-	unfunction _set-list-colors
+    zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+    unfunction _set-list-colors
 }
 sched 0 _set-list-colors  # deferred since LC_COLORS might not be available yet
 
@@ -240,7 +242,7 @@ SAVEHIST=10000
 setopt append_history # append to history file instead of replacing it
 setopt extended_history # save each command’s beginning timestamp and the duration to the history file
 setopt hist_expire_dups_first # remove duplicated history first
-setopt hist_ignore_dups # don't put command into the history if they are duplicates of the previous event
+setopt hist_ignore_dups # do not put command into the history if they are duplicates of the previous event
 setopt inc_append_history # write to the history file immediately, not when the shell exits
 setopt share_history #  share history between all sessions
 
