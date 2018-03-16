@@ -20,14 +20,21 @@ set shiftwidth=4
 set expandtab
 set incsearch
 set ignorecase
-set smartcase
+" set smartcase
 set hidden
 set colorcolumn=80
 set completeopt-=preview
+set wildmenu
+set wildmode=longest:full,full
+set display+=lastline
 
 " split
 " set splitbelow
 set splitright
+
+" move vertically by visual line
+nnoremap j gj
+nnoremap k gk
 
 " disable comment continuation
 set formatoptions-=cro
@@ -71,6 +78,45 @@ autocmd FileType *.{md,mdown,mkd,mkdn,markdown,mdwn} setlocal spell spelllang=en
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"                                  folding                                     "
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set foldnestmax=3
+set foldlevelstart=3
+set foldminlines=5
+
+autocmd FileType c,cpp,vim,html,javascript setlocal foldmethod=syntax
+autocmd FileType python setlocal foldmethod=indent
+" autocmd BufWinEnter * setlocal foldmethod=manual
+" Modify from pseewald/vim-anyfold and http://dhruvasagar.com/2013/03/28/vim-better-foldtext
+set foldtext=MinimalFoldText()
+function! MinimalFoldText() abort
+	let fs = v:foldstart
+	while getline(fs) !~ '\w'
+		let fs = nextnonblank(fs + 1)
+	endwhile
+	if fs > v:foldend
+		let line = getline(v:foldstart)
+	else
+        let line = substitute(getline(fs), '\t', repeat(' ', &tabstop), 'g')
+		let line = substitute(line, '\(^\s*\)', {m -> repeat('⋅', strlen(m[1]))}, 'g')
+	endif
+
+	let w = winwidth(0) - &foldcolumn - &number * &numberwidth
+	let foldSize = 1 + v:foldend - v:foldstart
+    let foldSizeStr = '| ' . printf("%7s", foldSize . ' ') . ' |⋅⋅'
+	let lineCount = line("$")
+
+    if w - strwidth(foldSizeStr.line) > 0
+        let expansionString = repeat("⋅", w - strwidth(foldSizeStr.line))
+        return line . expansionString . foldSizeStr
+    else
+        let expansionString = repeat("⋅", w - strwidth(line))
+        return line . expansionString
+    endif
+endfunction
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                  mapping                                     "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " quick reload .vimrc
@@ -88,19 +134,6 @@ noremap <F4> :set paste! paste?<CR>
 " folding
 nmap <silent> <leader>izf vi}zf%<CR>
 nmap <silent> <leader>zf va}zf%<CR>
-
-" TODO: improve fold text
-"set foldtext=MyFoldText()
-    "set fillchars=fold:\ "space
-"function! MyFoldText()
-    "let nl = v:foldend - v:foldstart + 1
-    "let txt = substitute(getline(v:foldstart), "^ ", "+", 1)
-    "return txt
-"endfunction
-
-" toggle location list
-" noremap <silent> <leader>lc :lcl<CR>
-" noremap <silent> <leader>lo :lw<CR>
 
 " tab shortcut
 map <leader>tn :tabnew<cr>
@@ -130,28 +163,14 @@ endfunction
 map <right> :call BufferOrTabNext()<CR>
 map <left> :call BufferOrTabPre()<CR>
 
-" move between spliting windows
-" map <C-j> <C-W>j
-" map <C-k> <C-W>k
-" map <C-h> <C-W>h
-" map <C-l> <C-W>l
-
 " move page
 map <UP> <C-E>
 map <DOWN> <C-Y>
 
-" move lines
-" if has("macunix")
-    " execute "set <A-j>=\ej"
-    " execute "set <A-k>=\ek"
-" endif
-
-" noremap <A-j> :m+<CR>==
-" nnoremap <A-k> :m-2<CR>==
-" inoremap <A-j> <Esc>:m+<CR>==gi
-" inoremap <A-k> <Esc>:m-2<CR>==gi
-" vnoremap <A-j> :m'>+<CR>gv=gv
-" vnoremap <A-k> :m-2<CR>gv=gv
+" Manually fix escape sequences as alt key handling in vim
+" http://vim.wikia.com/wiki/Fix_meta-keys_that_break_out_of_Insert_mode
+execute "set <A-j>=\ej"
+execute "set <A-k>=\ek"
 
 " multiple indentation/deindentation in visual mode
 vnoremap < <gv
@@ -165,7 +184,7 @@ map <leader>P "0P
 nnoremap ,cd :cd %:p:h<CR>:pwd<CR>
 
 " Allow saving of files as sudo when I forgot to start vim using sudo.
-cmap w!! w !sudo tee > /dev/null %
+" cmap w!! w !sudo tee > /dev/null %
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -182,29 +201,23 @@ call plug#begin('~/.vim/plugged')
 
 Plug 'scrooloose/nerdcommenter'
 Plug 'Isaac0616/vim-colors-solarized'
-" Plug 'lazywei/vim-doc-tw'
 Plug 'w0rp/ale'
 Plug 'kshenoy/vim-signature'
 Plug 'mbbill/undotree'
-Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
+Plug 'scrooloose/nerdtree'
 Plug 'Lokaltog/vim-easymotion'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'vim-scripts/DeleteTrailingWhitespace'
 Plug 'digitaltoad/vim-pug'
-" Plug 'jiangmiao/auto-pairs'
-Plug 'Raimondi/delimitMate'
+Plug 'jiangmiao/auto-pairs'
 Plug 'majutsushi/tagbar'
-" Plug 'vim-scripts/Tagbar'
 Plug 'vim-scripts/mru.vim'
 Plug 'vim-scripts/YankRing.vim'
 Plug 'kana/vim-fakeclip'
-" Plug 'Shougo/neocomplete.vim'
 Plug 'tmhedberg/matchit'
-" Plug 'Yggdroot/indentLine'
 Plug 'ntpeters/vim-better-whitespace'
 Plug 'mileszs/ack.vim'
-" Plug 'ronakg/quickr-preview.vim'
 Plug 'tpope/vim-surround'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'ctrlpvim/ctrlp.vim'
@@ -219,6 +232,7 @@ Plug 'christoomey/vim-tmux-navigator'
 Plug 'rdnetto/YCM-Generator', { 'branch': 'stable' }
 Plug 'jsfaint/gen_tags.vim'
 Plug 'vim-scripts/Mark--Karkat'
+Plug 'davidhalter/jedi-vim'
 
 function! BuildYCM(info)
   " info is a dictionary with 3 fields
@@ -232,12 +246,14 @@ endfunction
 
 Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }
 
+" Plug 'Yggdroot/indentLine'
+" Plug 'ronakg/quickr-preview.vim'
 " Plug 'hari-rangarajan/CCTree'
 " Plug 'wesleyche/SrcExpl'
 " Plug 'abudden/taghighlight-automirror'
 " Plug 'xolox/vim-misc' | Plug 'xolox/vim-easytags'
 " Plug 'haya14busa/incsearch.vim'
-
+" Plug 'lazywei/vim-doc-tw'
 "Plug 'snipMate'
 "Plug 'tpope/vim-fugitive'
 " Plug 'edkolev/tmuxline.vim'
@@ -256,6 +272,7 @@ silent! colorscheme solarized
 hi CursorLineNr ctermbg=0 ctermfg=10
 set fillchars+=vert:│
 hi VertSplit ctermbg=NONE guibg=NONE
+hi Folded cterm=Bold
 
 " airline
 " command: :AirlineToggleWhitespace
@@ -429,8 +446,16 @@ let g:indent_guides_guide_size = 1
 let g:indent_guides_start_level = 2
 
 " gen_tags
-let g:gen_tags#gtags_auto_gen = 1
+" let g:gen_tags#gtags_auto_gen = 1
 
 " Mark--Karkat
 nmap <Plug>NoMarkSearchCurrentPrev <Plug>MarkSearchCurrentPrev
 nmap <Plug>NoMarkSearchCurrentNext <Plug>MarkSearchCurrentNext
+
+" jedi-vim
+let g:jedi#completions_enabled = 0
+" let g:jedi#use_tabs_not_buffers = 1
+
+" NERDTree
+let NERDTreeShowHidden = 1
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
