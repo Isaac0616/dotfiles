@@ -13,7 +13,7 @@ set showcmd
 set showmatch
 set backspace=indent,eol,start
 set iskeyword-=*
-set cursorline
+" set cursorline
 set lazyredraw
 set tabstop=4
 set shiftwidth=4
@@ -427,6 +427,7 @@ let g:ale_sign_warning = '•'
 
 let g:ale_linters = {
 \   'python': ['flake8'],
+\   'javascript': ['eslint'],
 \}
 
 " YouCompleteMe

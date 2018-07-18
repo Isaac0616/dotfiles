@@ -11,7 +11,9 @@ fi
 #                            environment variables                             #
 ################################################################################
 export OS=$(uname)
-export PATH=/usr/local/bin:/usr/local/sbin:$PATH:.
+export GOROOT=/usr/local/opt/go/libexec
+export GOPATH=$HOME/go
+export PATH=/usr/local/bin:/usr/local/sbin:$PATH:$GOROOT/bin:$GOPATH/bin
 export LC_CTYPE=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 export EDITOR='vim'

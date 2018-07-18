@@ -19,11 +19,11 @@
         repo: "ppa:pi-rho/dev"
         update_cache: no
 
-    - name: Add additional ppa for fasd
-      become: true
-      apt_repository:
-        repo: "ppa:aacebedo/fasd"
-        update_cache: no
+    # - name: Add additional ppa for fasd
+      # become: true
+      # apt_repository:
+        # repo: "ppa:aacebedo/fasd"
+        # update_cache: no
 
     - name: apt-get update
       become: true
@@ -57,6 +57,11 @@
         - nmap
         - htop
         - fasd
+        - cmake
+        - build-essential
+        - nasm
+        - exuberant-ctags
+        - ntp
       register: apt_get_result
       retries: 5
       until: apt_get_result | success
@@ -84,6 +89,9 @@
       with_items:
         - pip
         - ipython
+        - flake8
+        - isort
+        - jedi
 
     - name: Install Python2 packages
       become: true
@@ -91,6 +99,9 @@
       with_items:
         - pip
         - ipython
+        - flake8
+        - isort
+        - jedi
 
     - name: git clone dotfiles
       git:
@@ -119,8 +130,8 @@
         - undodir
         - view
 
-    - name: Install vim packages
-      command: /usr/bin/vim +PlugInstall +qa
+    # - name: Install vim packages
+      # command: /usr/bin/vim +PlugInstall +qa
 
     - name: Install pwntools dependencies
       become: true
@@ -134,9 +145,14 @@
       until: apt_get_result | success
       delay: 3
 
+    - name: git clone pwntools
+      git:
+        repo: https://github.com/Gallopsled/pwntools
+        dest: ~/pwntools
+
     - name: Install pwntools
       become: true
-      pip: name=pwntools state=latest executable=pip2
+      pip: name=/home/vagrant/pwntools executable=pip2 editable=yes
 
     - name: git clone pwndbg
       git:
@@ -161,7 +177,7 @@
     - name: Configure user account
       become: true
       user:
-        name: ubuntu
+        name: vagrant
         password: $6$rounds=656000$GYd24Dh3CkkZ9qHJ$PZp51G4piQI2IYLoZIIIJEL9TDxjMLDRnkbYrK4k/mJM73IsEfm9QutpHsvFCsiKD6tXu/lDmg7lhpb4mAfsb1
         shell: /bin/zsh
 
