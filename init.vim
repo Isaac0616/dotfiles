@@ -421,4 +421,7 @@ inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 if has('macunix')
     let g:deoplete#sources#clang#libclang_path = '/usr/local/opt/llvm/lib/libclang.dylib'
     let g:deoplete#sources#clang#clang_header = '/usr/local/opt/llvm/include/clang'
+elseif has('unix')
+    let g:deoplete#sources#clang#libclang_path = '/usr/lib/llvm-6.0/lib/libclang.so'
+    let g:deoplete#sources#clang#clang_header = '/usr/local/opt/llvm/include/clang'
 endif

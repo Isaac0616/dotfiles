@@ -13,10 +13,16 @@ fi
 export OS=$(uname)
 export GOROOT=/usr/local/opt/go/libexec
 export GOPATH=$HOME/go
-export PATH=/usr/local/bin:/usr/local/sbin:$PATH:$GOROOT/bin:$GOPATH/bin
 export LC_CTYPE=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 export EDITOR='vim'
+
+export PATH=/usr/local/bin:/usr/local/sbin:$PATH:$GOROOT/bin:$GOPATH/bin
+if [[ $OS == "Linux" ]]; then
+    export PATH=/home/linuxbrew/.linuxbrew/bin:$PATH
+    export MANPATH=/home/linuxbrew/.linuxbrew/share/man:$MANPATH
+    export INFOPATH=/home/linuxbrew/.linuxbrew/share/info:$INFOPATH
+fi
 
 # disable special creation/extraction of ._* files by tar, etc. on Mac OS X
 export COPYFILE_DISABLE=1

@@ -230,7 +230,7 @@ Plug 'matze/vim-move'
 Plug 'Valloric/ListToggle'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'rdnetto/YCM-Generator', { 'branch': 'stable' }
-Plug 'jsfaint/gen_tags.vim'
+" Plug 'jsfaint/gen_tags.vim'
 Plug 'vim-scripts/Mark--Karkat'
 Plug 'davidhalter/jedi-vim'
 
