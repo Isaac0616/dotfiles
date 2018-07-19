@@ -2,61 +2,36 @@
 "                                   basic                                      "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 filetype plugin on
-set nocompatible
 set number
-set autoindent
-set smartindent
 set cinwords=if,else,while,do,for,switch,case
-set ruler
-set showmode
-set showcmd
-set showmatch
-set backspace=indent,eol,start
+set smartindent
 set iskeyword-=*
-" set cursorline
-set lazyredraw
+" set lazyredraw
 set tabstop=4
 set shiftwidth=4
 set expandtab
-set incsearch
 set ignorecase
-" set smartcase
 set hidden
 set colorcolumn=80
 set completeopt-=preview
-set wildmenu
 set wildmode=longest:full,full
-set display+=lastline
+set undofile
+set backup
+set backupdir=~/.local/share/nvim/backup
+" set splitright
 
-" split
-" set splitbelow
-set splitright
 
 " move vertically by visual line
 nnoremap j gj
 nnoremap k gk
 
 " disable comment continuation
-set formatoptions-=cro
+" set formatoptions-=cro
 
 " no timeout except ESC
-set ttimeout
-set ttimeoutlen=20
-set notimeout
-
-" persistent undo
-set undodir=~/.vim/undodir
-set undofile
-
-" swap directory
-set directory=~/.vim/swap
-
-" backup directory
-set backup
-set backupdir=~/.vim/backup
-
-" viminfo lacation
-set viminfo+=n~/.vim/viminfo
+" set ttimeout
+" set ttimeoutlen=20
+" set notimeout
 
 " Save cursor loation and folder setting.
 " Backslashes in file names replaced with forward slashes.
@@ -68,14 +43,13 @@ autocmd FileType * setlocal fo-=c fo-=r fo-=o
 
 let mapleader = ","
 
-
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                             file type specific                               "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 autocmd FileType html,pug,json,javascript,css setlocal shiftwidth=2 tabstop=2
-autocmd BufRead,BufNewFile *.{md,mdown,mkd,mkdn,markdown,mdwn} let g:DeleteTrailingWhitespace=0
-autocmd FileType *.{md,mdown,mkd,mkdn,markdown,mdwn} setlocal spell spelllang=en_us
-
+autocmd FileType markdown EnableWhitespace
+autocmd FileType markdown DisableStripWhitespaceOnSave
+autocmd FileType markdown setlocal spell spelllang=en_us
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                  folding                                     "
@@ -115,12 +89,11 @@ function! MinimalFoldText() abort
     endif
 endfunction
 
-
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                  mapping                                     "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " quick reload .vimrc
-map <leader>ss :source ~/.vimrc<CR>
+map <leader>ss :source $MYVIMRC<CR>
 
 " toggle tagbar
 map <silent> <F6> :TagbarToggle<cr>
@@ -169,16 +142,24 @@ map <DOWN> <C-Y>
 
 " Manually fix escape sequences as alt key handling in vim
 " http://vim.wikia.com/wiki/Fix_meta-keys_that_break_out_of_Insert_mode
-execute "set <A-j>=\ej"
-execute "set <A-k>=\ek"
+" execute "set <A-j>=\ej"
+" execute "set <A-k>=\ek"
 
 " multiple indentation/deindentation in visual mode
 vnoremap < <gv
 vnoremap > >gv
 
-" paste last copy
-map <leader>p "0p
-map <leader>P "0P
+" copy/paste
+" map <leader>p "0p
+" map <leader>P "0P
+vnoremap <leader>y  "+y
+nnoremap <leader>Y  "+yg_
+nnoremap <leader>y  "+y
+nnoremap <leader>p "+p
+nnoremap <leader>P "+P
+vnoremap <leader>p "+p
+vnoremap <leader>P "+P
+
 
 " cd to current file's directory
 nnoremap ,cd :cd %:p:h<CR>:pwd<CR>
@@ -186,18 +167,17 @@ nnoremap ,cd :cd %:p:h<CR>:pwd<CR>
 " Allow saving of files as sudo when I forgot to start vim using sudo.
 " cmap w!! w !sudo tee > /dev/null %
 
-
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                  vim-plug                                    "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " automatic installation
-if empty(glob('~/.vim/autoload/plug.vim'))
-  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+if empty(glob('~/.local/share/nvim/site/autoload/plug.vim'))
+  silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
     \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
   autocmd VimEnter * PlugInstall | source $MYVIMRC
 endif
 
-call plug#begin('~/.vim/plugged')
+call plug#begin('~/.local/share/nvim/plugged')
 
 Plug 'scrooloose/nerdcommenter'
 Plug 'Isaac0616/vim-colors-solarized'
@@ -208,44 +188,47 @@ Plug 'scrooloose/nerdtree'
 Plug 'Lokaltog/vim-easymotion'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-Plug 'vim-scripts/DeleteTrailingWhitespace'
-Plug 'digitaltoad/vim-pug'
 Plug 'jiangmiao/auto-pairs'
 Plug 'majutsushi/tagbar'
 Plug 'vim-scripts/mru.vim'
 Plug 'vim-scripts/YankRing.vim'
-Plug 'kana/vim-fakeclip'
-Plug 'tmhedberg/matchit'
-Plug 'ntpeters/vim-better-whitespace'
 Plug 'mileszs/ack.vim'
 Plug 'tpope/vim-surround'
-Plug 'terryma/vim-multiple-cursors'
-Plug 'ctrlpvim/ctrlp.vim'
+" Plug 'ctrlpvim/ctrlp.vim'
 Plug 'mhinz/vim-startify'
 Plug 'vim-scripts/restore_view.vim'
-Plug 'bronson/vim-visual-star-search'
+Plug 'vim-scripts/Mark--Karkat' | Plug 'bronson/vim-visual-star-search'
 Plug 'yuttie/comfortable-motion.vim'
 Plug 'nathanaelkane/vim-indent-guides', { 'on': 'IndentGuidesToggle' }
 Plug 'matze/vim-move'
 Plug 'Valloric/ListToggle'
 Plug 'christoomey/vim-tmux-navigator'
-Plug 'rdnetto/YCM-Generator', { 'branch': 'stable' }
-Plug 'jsfaint/gen_tags.vim'
-Plug 'vim-scripts/Mark--Karkat'
+" Plug 'jsfaint/gen_tags.vim'
 Plug 'davidhalter/jedi-vim'
+Plug 'digitaltoad/vim-pug'
+Plug 'ntpeters/vim-better-whitespace'
+Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins'  }
+Plug 'zchee/deoplete-jedi'
+Plug 'zchee/deoplete-clang'
+Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern'  }
 
-function! BuildYCM(info)
-  " info is a dictionary with 3 fields
-  " - name:   name of the plugin
-  " - status: 'installed', 'updated', or 'unchanged'
-  " - force:  set on PlugInstall! or PlugUpdate!
-  if a:info.status == 'installed' || a:info.force
-    !./install.py --clang-completer --js-completer
-  endif
-endfunction
+Plug '/usr/local/opt/fzf'
+Plug 'junegunn/fzf.vim'
 
-Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }
+" function! BuildYCM(info)
+  " " info is a dictionary with 3 fields
+  " " - name:   name of the plugin
+  " " - status: 'installed', 'updated', or 'unchanged'
+  " " - force:  set on PlugInstall! or PlugUpdate!
+  " if a:info.status == 'installed' || a:info.force
+    " !./install.py --clang-completer --js-completer
+  " endif
+" endfunction
 
+" Plug 'rdnetto/YCM-Generator', { 'branch': 'stable' }
+" Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }
+
+" Plug 'terryma/vim-multiple-cursors'
 " Plug 'Yggdroot/indentLine'
 " Plug 'ronakg/quickr-preview.vim'
 " Plug 'hari-rangarajan/CCTree'
@@ -253,13 +236,11 @@ Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }
 " Plug 'abudden/taghighlight-automirror'
 " Plug 'xolox/vim-misc' | Plug 'xolox/vim-easytags'
 " Plug 'haya14busa/incsearch.vim'
-" Plug 'lazywei/vim-doc-tw'
-"Plug 'snipMate'
-"Plug 'tpope/vim-fugitive'
+" Plug 'tpope/vim-fugitive'
+
 " Plug 'edkolev/tmuxline.vim'
 
 call plug#end()
-
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                               plugin setting                                 "
@@ -298,7 +279,7 @@ autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTree
 " command: ctags -R
 " command: ctags -R --fields=+l --c-kinds=+p --c++-kinds=+p
 " Use g] instead of C-] to get the list of all matches
-set tags=./tags;
+" set tags=./tags;
 nnoremap <F1> <C-W>}
 nnoremap <silent> <F2> :pclose<CR>
 
@@ -348,27 +329,9 @@ if has('cscope')
   nmap <C-\>d :cs find d <C-R>=expand("<cword>")<CR><CR>
 endif
 
-" neocomplcache
-" let g:acp_enableAtStartup = 0
-" let g:neocomplete#enable_at_startup = 1
-" let g:neocomplete#enable_smart_case = 1
-" let g:neocomplete#enable_auto_select = 1
-" inoremap <expr><Tab>
-" \ neocomplete#complete_common_string() != '' ?
-" \   neocomplete#complete_common_string() :
-" \ pumvisible() ? "\<C-n>" : "\<Tab>"
-" set completeopt-=preview
-" <C-h>, <BS>: close popup and delete backword char.
-"inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
-"inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
-
 " YankRing
 nnoremap <silent> <F10> :YRShow<CR>
-let g:yankring_history_dir = '~/.vim'
-
-" Delete trailing whitespace
-let g:DeleteTrailingWhitespace = 1
-let g:DeleteTrailingWhitespace_Action = 'delete'
+let g:yankring_history_dir = '~/.local/share/nvim'
 
 " NERD Commenter
 " Add spaces after comment delimiters by default
@@ -378,12 +341,8 @@ let g:NERDAltDelims_c = 1
 " use '#' instead of '# ' for python
 let g:NERDAltDelims_python = 1
 
-" " incsearch
-" map /  <Plug>(incsearch-forward)
-" map ?  <Plug>(incsearch-backward)
-
 " MRU
-let MRU_File = $HOME . '/.vim/vim_mru_files'
+let MRU_File = $HOME . '/.local/share/nvim/vim_mru_files'
 
 " ack.vim
 if executable('ag')
@@ -391,12 +350,6 @@ if executable('ag')
 endif
 
 nnoremap <F3> :Ack! <cword> %<CR>
-
-" delimitMate
-" let g:delimitMate_expand_space = 1
-" let g:delimitMate_expand_cr = 1
-" let g:delimitMate_expand_inside_quotes = 1
-" let g:delimitMate_nesting_quotes = ['"', '`', "'"]
 
 " Startify
 hi StartifyHeader  ctermfg=2
@@ -426,32 +379,25 @@ let g:ale_sign_warning = '•'
 " let g:ale_lint_on_text_changed = 'never'
 
 let g:ale_linters = {
-\   'python': ['flake8'],
+\   'python': ['flake8', 'pyls'],
 \   'javascript': ['eslint'],
 \}
 
-" YouCompleteMe
-let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
-let g:ycm_show_diagnostics_ui = 0
-let g:ycm_complete_in_comments = 1
-let g:ycm_collect_identifiers_from_comments_and_strings = 1
-let g:ycm_seed_identifiers_with_syntax = 1
-let g:ycm_max_num_candidates = 20
-let g:ycm_semantic_triggers = {
-\ 'c,cpp,python,javascript': [ 're!\w{2}' ]
-\}
+" " YouCompleteMe
+" let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
+" let g:ycm_show_diagnostics_ui = 0
+" let g:ycm_complete_in_comments = 1
+" let g:ycm_collect_identifiers_from_comments_and_strings = 1
+" let g:ycm_seed_identifiers_with_syntax = 1
+" let g:ycm_max_num_candidates = 20
+" let g:ycm_semantic_triggers = {
+" \ 'c,cpp,python,javascript': [ 're!\w{2}' ]
+" \}
 
 " vim-indent-guides
 nmap <silent> <Leader>ig :IndentGuidesToggle<CR>
 let g:indent_guides_guide_size = 1
 let g:indent_guides_start_level = 2
-
-" gen_tags
-" let g:gen_tags#gtags_auto_gen = 1
-
-" Mark--Karkat
-nmap <Plug>NoMarkSearchCurrentPrev <Plug>MarkSearchCurrentPrev
-nmap <Plug>NoMarkSearchCurrentNext <Plug>MarkSearchCurrentNext
 
 " jedi-vim
 let g:jedi#completions_enabled = 0
@@ -460,3 +406,19 @@ let g:jedi#completions_enabled = 0
 " NERDTree
 let NERDTreeShowHidden = 1
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+
+" vim-better-whitespace
+let g:better_whitespace_ctermcolor='red'
+let g:better_whitespace_enabled=1
+let g:strip_whitespace_on_save=1
+let g:strip_whitelines_at_eof=1
+
+" deoplete
+let g:deoplete#enable_at_startup = 1
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+
+if has('macunix')
+    let g:deoplete#sources#clang#libclang_path = '/usr/local/opt/llvm/lib/libclang.dylib'
+    let g:deoplete#sources#clang#clang_header = '/usr/local/opt/llvm/include/clang'
+endif

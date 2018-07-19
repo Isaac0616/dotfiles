@@ -120,6 +120,12 @@
         - vimrc
         - zshrc
 
+    - name: Symlink neovim config
+      file:
+        src: ~/.dotfiles/init.vim
+        dest: ~/.config/nvim/init.vim
+        state: link
+
     - name: Create .vim folder structure
       file:
         path: ~/.vim/{{ item }}

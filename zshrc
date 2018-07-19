@@ -73,8 +73,9 @@ alias pwn='ssh'
 alias :3='echo'
 # alias tldr='less'
 alias fucking='sudo'
-alias j='fasd_cd -d'
-alias jj='fasd_cd -d -i'
+alias vim='nvim'
+# alias j='fasd_cd -d'
+# alias jj='fasd_cd -d -i'
 
 ################################################################################
 #                                  functions                                   #
@@ -309,3 +310,87 @@ export TLDR_COLOR_COMMAND="red"
 export TLDR_COLOR_PARAMETER="white"
 export TLDR_CACHE_ENABLED=1
 export TLDR_CACHE_MAX_AGE=720
+
+# fzf
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+export FZF_CTRL_T_OPTS="--preview '(highlight -O ansi -l {} 2> /dev/null || cat {} || tree -C {}) 2> /dev/null | head -200'"
+export FZF_DEFAULT_OPTS="--preview '(highlight -O ansi -l {} 2> /dev/null || cat {} || tree -C {}) 2> /dev/null | head -200'"
+
+# Setting fd as the default source for fzf
+export FZF_DEFAULT_COMMAND='fd --type f'
+# To apply the command to CTRL-T as well
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_CTRL_R_OPTS="--preview 'echo {}' --preview-window down:3:hidden:wrap --bind '?:toggle-preview'"
+
+# fzf solarized colors
+_gen_fzf_default_opts() {
+    local base03="234"
+    local base02="235"
+    local base01="240"
+    local base00="241"
+    local base0="244"
+    local base1="245"
+    local base2="254"
+    local base3="230"
+    local yellow="136"
+    local orange="166"
+    local red="160"
+    local magenta="125"
+    local violet="61"
+    local blue="33"
+    local cyan="37"
+    local green="64"
+
+    # Comment and uncomment below for the light theme.
+
+    # Solarized Dark color scheme for fzf
+    export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS"
+    --color fg:-1,bg:-1,hl:$blue,fg+:$base2,bg+:$base02,hl+:$blue
+    --color info:$yellow,prompt:$yellow,pointer:$base3,marker:$base3,spinner:$yellow
+    "
+    ## Solarized Light color scheme for fzf
+    #export FZF_DEFAULT_OPTS="
+    #  --color fg:-1,bg:-1,hl:$blue,fg+:$base02,bg+:$base2,hl+:$blue
+    #  --color info:$yellow,prompt:$yellow,pointer:$base03,marker:$base03,spinner:$yellow
+    #"
+}
+_gen_fzf_default_opts
+
+# Install (one or multiple) selected application(s)
+# using "brew search" as source input
+# mnemonic [B]rew [I]nstall [P]lugin
+bip() {
+  local inst=$(brew search | fzf -m)
+
+  if [[ $inst ]]; then
+    for prog in $(echo $inst);
+    do; brew install $prog; done;
+  fi
+}
+
+
+## Install or open the webpage for the selected application  Install or o
+# using brew cask search as input source
+# and display a info quickview window for the currently marked application
+install() {
+    local token
+    token=$(brew search --casks | fzf-tmux --query="$1" +m --preview 'brew cask info {}')
+
+    if [ "x$token" != "x" ]
+    then
+        echo "(I)nstall or open the (h)omepage of $token"
+        read input
+        if [ $input = "i" ] || [ $input = "I" ]; then
+            brew cask install $token
+        fi
+        if [ $input = "h" ] || [ $input = "H" ]; then
+            brew cask home $token
+        fi
+    fi
+}
+
+j() {
+    [ $# -gt 0 ] && fasd_cd -d "$*" && return
+    local dir
+    dir="$(fasd -Rdl "$1" | fzf -1 -0 --no-sort +m)" && cd "${dir}" || return 1
+}
