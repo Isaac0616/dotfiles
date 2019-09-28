@@ -12,7 +12,7 @@ set shiftwidth=4
 set expandtab
 set ignorecase
 set hidden
-set colorcolumn=80
+set colorcolumn=100
 set completeopt-=preview
 set wildmode=longest:full,full
 set undofile
@@ -46,7 +46,7 @@ let mapleader = ","
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                             file type specific                               "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-autocmd FileType html,pug,json,javascript,css setlocal shiftwidth=2 tabstop=2
+autocmd FileType html,pug,json,javascript,css,typescript setlocal shiftwidth=2 tabstop=2
 autocmd FileType markdown EnableWhitespace
 autocmd FileType markdown DisableStripWhitespaceOnSave
 autocmd FileType markdown setlocal spell spelllang=en_us
@@ -58,7 +58,7 @@ set foldnestmax=3
 set foldlevelstart=3
 set foldminlines=5
 
-autocmd FileType c,cpp,vim,html,javascript setlocal foldmethod=syntax
+autocmd FileType c,cpp,vim,html,javascript,typescript,go,java setlocal foldmethod=syntax
 autocmd FileType python setlocal foldmethod=indent
 " autocmd BufWinEnter * setlocal foldmethod=manual
 " Modify from pseewald/vim-anyfold and http://dhruvasagar.com/2013/03/28/vim-better-foldtext
@@ -214,6 +214,11 @@ Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern'  }
 
 Plug '/usr/local/opt/fzf'
 Plug 'junegunn/fzf.vim'
+
+Plug 'leafgarland/typescript-vim'
+Plug 'airblade/vim-gitgutter'
+Plug 'tpope/vim-fugitive'
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 
 " function! BuildYCM(info)
   " " info is a dictionary with 3 fields
@@ -412,6 +417,7 @@ let g:better_whitespace_ctermcolor='red'
 let g:better_whitespace_enabled=1
 let g:strip_whitespace_on_save=1
 let g:strip_whitelines_at_eof=1
+let g:strip_whitespace_confirm=0
 
 " deoplete
 let g:deoplete#enable_at_startup = 1
@@ -425,3 +431,12 @@ elseif has('unix')
     let g:deoplete#sources#clang#libclang_path = '/usr/lib/llvm-6.0/lib/libclang.so'
     let g:deoplete#sources#clang#clang_header = '/usr/local/opt/llvm/include/clang'
 endif
+
+" testing
+command! BufferDelete bp|bd #
+cnoreabbrev bd BufferDelete
+
+call deoplete#custom#option('omni_patterns', { 'go': '[^. *\t]\.\w*' })
+
+let g:go_fmt_autosave = 0
+let g:go_code_completion_enabled = 0
