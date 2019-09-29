@@ -46,7 +46,7 @@ let mapleader = ","
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                             file type specific                               "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-autocmd FileType html,pug,json,javascript,css,typescript setlocal shiftwidth=2 tabstop=2
+autocmd FileType html,pug,json,javascript,css,typescript,yaml setlocal shiftwidth=2 tabstop=2
 autocmd FileType markdown EnableWhitespace
 autocmd FileType markdown DisableStripWhitespaceOnSave
 autocmd FileType markdown setlocal spell spelllang=en_us
