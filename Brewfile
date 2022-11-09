@@ -1,3 +1,6 @@
+tap "heroku/brew"
+tap "homebrew/cask-versions"
+
 brew "bat"
 brew "cmake"
 brew "coreutils"

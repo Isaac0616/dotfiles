@@ -17,7 +17,7 @@ export LC_CTYPE=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 export EDITOR='nvim'
 
-export PATH=/usr/local/bin:/usr/local/sbin:$PATH:$GOROOT/bin:$GOPATH/bin
+export PATH="$HOMEBREW_PREFIX/bin":/usr/local/bin:/usr/local/sbin:$PATH:$GOROOT/bin:$GOPATH/bin
 if [[ $OS == "Linux" ]]; then
     export PATH=/home/linuxbrew/.linuxbrew/bin:$PATH
     export MANPATH=/home/linuxbrew/.linuxbrew/share/man:$MANPATH
@@ -27,7 +27,7 @@ if [[ $OS == "Darwin" ]]; then
     export PATH=/usr/local/opt/ruby/bin:$PATH
     export PATH=`gem environment gemdir`/bin:$PATH
     # DocSend
-    export PATH="$(brew --prefix)/opt/imagemagick@6/bin:$PATH"
+    export PATH="$HOMEBREW_PREFIX/opt/imagemagick@6/bin:$PATH"
     export PATH=$HOME/src/elaine/bin:$PATH
     export PATH=/Applications/Postgres.app/Contents/Versions/latest/bin:$PATH
     export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
@@ -46,7 +46,7 @@ export LSCOLORS=FxfxbEaEBxxEhEhBaDaCaD
 export LS_COLORS="di=1;35:ln=35:so=31;1;44:pi=30;1;44:ex=1;31:bd=0;1;44:cd=37;1;44:su=37;1;41:sg=30;1;43:tw=30;1;42:ow=30;1;43"
 
 if [[ $OS == "Darwin" ]]; then
-    export SHELL=/usr/local/bin/zsh
+    export SHELL="$HOMEBREW_PREFIX/bin/zsh"
     export s=/Users/poning/src/server
     export GOPATH=$GOPATH:/Users/poning/src/server/go
     # DocSend
@@ -211,9 +211,9 @@ fi
 ################################################################################
 #                                    zplug                                     #
 ################################################################################
-alias git=/usr/local/bin/git
+# alias git=/usr/local/bin/git
 source ~/.zplug/init.zsh
-unalias git
+# unalias git
 
 zplug "lukechilds/zsh-nvm"
 zplug "Isaac0616/emoticon-zsh-theme", as:theme
@@ -331,16 +331,16 @@ fuck () {
 }
 
 # fasd
-if [[ $OS == "Darwin" ]]; then
-    # export _FASD_BACKENDS="native spotlight"
-    export _FASD_BACKENDS="native"
-fi
-fasd_cache="$HOME/.fasd-init-zsh"
-if [ "$(command -v fasd)" -nt "$fasd_cache" -o ! -s "$fasd_cache" ]; then
-  fasd --init posix-alias zsh-hook zsh-ccomp zsh-ccomp-install zsh-wcomp zsh-wcomp-install >| "$fasd_cache"
-fi
-source "$fasd_cache"
-unset fasd_cache
+# if [[ $OS == "Darwin" ]]; then
+    # # export _FASD_BACKENDS="native spotlight"
+    # export _FASD_BACKENDS="native"
+# fi
+# fasd_cache="$HOME/.fasd-init-zsh"
+# if [ "$(command -v fasd)" -nt "$fasd_cache" -o ! -s "$fasd_cache" ]; then
+  # fasd --init posix-alias zsh-hook zsh-ccomp zsh-ccomp-install zsh-wcomp zsh-wcomp-install >| "$fasd_cache"
+# fi
+# source "$fasd_cache"
+# unset fasd_cache
 
 # tldr
 export TLDR_COLOR_BLANK="white"
@@ -430,11 +430,11 @@ install() {
     fi
 }
 
-j() {
-    [ $# -gt 0 ] && fasd_cd -d "$*" && return
-    local dir
-    dir="$(fasd -Rdl "$1" | fzf -1 -0 --no-sort +m)" && cd "${dir}" || return 1
-}
+# j() {
+    # [ $# -gt 0 ] && fasd_cd -d "$*" && return
+    # local dir
+    # dir="$(fasd -Rdl "$1" | fzf -1 -0 --no-sort +m)" && cd "${dir}" || return 1
+# }
 
 headers() {
   curl -s -o /dev/null -D - "$@" | grep -v -e '^[[:space:]]*$' | tail -n +2 | sort --ignore-case
