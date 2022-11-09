@@ -19,6 +19,7 @@ set undofile
 set backup
 set backupdir=~/.local/share/nvim/backup
 " set splitright
+set virtualedit=block
 
 
 " move vertically by visual line
@@ -27,6 +28,10 @@ nnoremap k gk
 
 " disable comment continuation
 " set formatoptions-=cro
+
+" Don't auto-wrap a line but allow `gq` to wrap the line manually
+set textwidth=100
+set formatoptions-=t
 
 " no timeout except ESC
 " set ttimeout
@@ -46,20 +51,22 @@ let mapleader = ","
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                             file type specific                               "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-autocmd FileType html,pug,json,javascript,css,typescript setlocal shiftwidth=2 tabstop=2
+autocmd FileType html,pug,json,javascript,javascriptreact,css,typescript,typescriptreact,yaml setlocal shiftwidth=2 tabstop=2
 autocmd FileType markdown EnableWhitespace
 autocmd FileType markdown DisableStripWhitespaceOnSave
 autocmd FileType markdown setlocal spell spelllang=en_us
+autocmd BufNewFile,BufRead *.pyst,*.pyst-include setlocal filetype=python
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                  folding                                     "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-set foldnestmax=3
+set foldnestmax=5
 set foldlevelstart=3
 set foldminlines=5
+set foldignore=
 
 autocmd FileType c,cpp,vim,html,javascript,typescript,go,java setlocal foldmethod=syntax
-autocmd FileType python setlocal foldmethod=indent
+autocmd FileType python,ruby setlocal foldmethod=indent
 " autocmd BufWinEnter * setlocal foldmethod=manual
 " Modify from pseewald/vim-anyfold and http://dhruvasagar.com/2013/03/28/vim-better-foldtext
 set foldtext=MinimalFoldText()
@@ -95,8 +102,9 @@ endfunction
 " quick reload .vimrc
 map <leader>ss :source $MYVIMRC<CR>
 
-" toggle tagbar
+" tagbar
 map <silent> <F6> :TagbarToggle<cr>
+let g:tagbar_sort = 0
 
 " toggle highlight search
 noremap <F8> :set hlsearch! hlsearch?<CR>
@@ -133,8 +141,8 @@ function! BufferOrTabPre()
     endif
 endfunction
 
-map <right> :call BufferOrTabNext()<CR>
-map <left> :call BufferOrTabPre()<CR>
+map <silent> <right> :call BufferOrTabNext()<CR>
+map <silent> <left> :call BufferOrTabPre()<CR>
 
 " move page
 map <UP> <C-E>
@@ -181,7 +189,7 @@ call plug#begin('~/.local/share/nvim/plugged')
 
 Plug 'scrooloose/nerdcommenter'
 Plug 'Isaac0616/vim-colors-solarized'
-Plug 'w0rp/ale'
+" Plug 'w0rp/ale'
 Plug 'kshenoy/vim-signature'
 Plug 'mbbill/undotree'
 Plug 'scrooloose/nerdtree'
@@ -204,13 +212,8 @@ Plug 'matze/vim-move'
 Plug 'Valloric/ListToggle'
 Plug 'christoomey/vim-tmux-navigator'
 " Plug 'jsfaint/gen_tags.vim'
-Plug 'davidhalter/jedi-vim'
 Plug 'digitaltoad/vim-pug'
 Plug 'ntpeters/vim-better-whitespace'
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins'  }
-Plug 'zchee/deoplete-jedi'
-Plug 'zchee/deoplete-clang'
-Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern'  }
 
 Plug '/usr/local/opt/fzf'
 Plug 'junegunn/fzf.vim'
@@ -218,7 +221,20 @@ Plug 'junegunn/fzf.vim'
 Plug 'leafgarland/typescript-vim'
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
-Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+Plug '~/src/pyxl/vim'
+Plug 'Vimjas/vim-python-pep8-indent'
+" Plug 'benmills/vimux'
+Plug 'google/vim-searchindex'
+" Plug 'ap/vim-buftabline'
+
+" LSP related plugins
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+" Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins'  }
+" Plug 'zchee/deoplete-jedi'
+" Plug 'zchee/deoplete-clang'
+" Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern'  }
+" Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+" Plug 'davidhalter/jedi-vim'
 
 " function! BuildYCM(info)
   " " info is a dictionary with 3 fields
@@ -268,6 +284,7 @@ let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#show_tab_nr = 0
 let g:airline#extensions#tabline#fnamemod = ':t'
 let g:airline#extensions#tabline#close_symbol = ''
+let airline#extensions#tabline#disable_refresh = 1
 let g:airline_theme='solarized'
 
 " easymotion
@@ -375,8 +392,10 @@ hi StartifySlash   ctermfg=10
       " \}
 
 " ale
-let g:ale_python_flake8_executable = 'python2'
+let g:ale_python_flake8_executable = 'python3'
 let g:ale_python_flake8_options = '-m flake8'
+let g:ale_python_autoflake_options = '--remove-all-unused-imports'
+let g:ale_python_isort_options = '--settings-path ~/.dotfiles/.isort.cfg'
 let g:ale_lint_on_enter = 0
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 let g:ale_sign_error = '•'
@@ -384,9 +403,62 @@ let g:ale_sign_warning = '•'
 " let g:ale_lint_on_text_changed = 'never'
 
 let g:ale_linters = {
-\   'python': ['flake8', 'pyls'],
+\   'python': ['flake8'],
 \   'javascript': ['eslint'],
+\   'json': ['jsonlint'],
 \}
+
+let g:ale_fixers = {
+\   'python': ['autoflake', 'black', 'isort'],
+\   'json': ['fixjson'],
+\}
+
+nmap <silent> <leader>aj <Plug>(ale_next_wrap)
+nmap <silent> <leader>ak <Plug>(ale_previous_wrap)
+nmap <silent> <leader>af <Plug>(ale_fix)
+
+" coc
+let g:coc_global_extensions = ['coc-pyright', 'coc-json', 'coc-solargraph']
+" Use `[g` and `]g` to navigate diagnostics
+" Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
+
+" GoTo code navigation.
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
+" Symbol renaming.
+nmap <leader>rn <Plug>(coc-rename)
+
+" Use K to show documentation in preview window.
+nnoremap <silent> K :call ShowDocumentation()<CR>
+
+function! ShowDocumentation()
+  if CocAction('hasProvider', 'hover')
+    call CocActionAsync('doHover')
+  else
+    call feedkeys('K', 'in')
+  endif
+endfunction
+
+" Add `:Format` command to format current buffer.
+command! -nargs=0 Format :call Format()
+noremap <silent> <Leader>f :call Format()<cr>
+
+function! Format()
+    if &filetype == 'python'
+        :silent !autoflake --remove-all-unused-imports -i %
+        :edit!
+    endif
+    :silent call CocAction('format')
+    :silent call CocAction('organizeImport')
+endfunction
+
+hi CocUnusedHighlight cterm=underline ctermfg=10
+hi CocHintSign ctermfg=11
 
 " " YouCompleteMe
 " let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
@@ -406,6 +478,7 @@ let g:indent_guides_start_level = 2
 
 " jedi-vim
 let g:jedi#completions_enabled = 0
+let g:jedi#show_call_signatures = "0"
 " let g:jedi#use_tabs_not_buffers = 1
 
 " NERDTree
@@ -435,8 +508,25 @@ endif
 " testing
 command! BufferDelete bp|bd #
 cnoreabbrev bd BufferDelete
+cnoreabbrev ,,s ~/src/server
 
-call deoplete#custom#option('omni_patterns', { 'go': '[^. *\t]\.\w*' })
+" call deoplete#custom#option('omni_patterns', { 'go': '[^. *\t]\.\w*' })
 
 let g:go_fmt_autosave = 0
 let g:go_code_completion_enabled = 0
+
+let g:fzf_layout = { 'down': '~30%' }
+
+function! SGLink() range
+    let revision = trim(system("git merge-base HEAD origin/master"))
+    let git_root = trim(system("git rev-parse --show-toplevel"))
+    let base = "https://sourcegraph.pp.dropbox.com/git.sjc.dropbox.com/server@" . revision . "/-/blob"
+    let fname = substitute(expand("%:p"), git_root, "", "")
+    let ln = "#L" . a:firstline
+    if a:firstline != a:lastline
+        let ln .= "-" . a:lastline
+    end
+    let @+ = base . fname . ln
+endfunction
+nnoremap <leader>sg :call SGLink()<cr>
+vnoremap <leader>sg :call SGLink()<cr>

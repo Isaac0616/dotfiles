@@ -15,7 +15,7 @@ export GOROOT=/usr/local/opt/go/libexec
 export GOPATH=$HOME/go
 export LC_CTYPE=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
-export EDITOR='vim'
+export EDITOR='nvim'
 
 export PATH=/usr/local/bin:/usr/local/sbin:$PATH:$GOROOT/bin:$GOPATH/bin
 if [[ $OS == "Linux" ]]; then
@@ -23,12 +23,22 @@ if [[ $OS == "Linux" ]]; then
     export MANPATH=/home/linuxbrew/.linuxbrew/share/man:$MANPATH
     export INFOPATH=/home/linuxbrew/.linuxbrew/share/info:$INFOPATH
 fi
+if [[ $OS == "Darwin" ]]; then
+    export PATH=/usr/local/opt/ruby/bin:$PATH
+    export PATH=`gem environment gemdir`/bin:$PATH
+    # DocSend
+    export PATH="$(brew --prefix)/opt/imagemagick@6/bin:$PATH"
+    export PATH=$HOME/src/elaine/bin:$PATH
+    export PATH=/Applications/Postgres.app/Contents/Versions/latest/bin:$PATH
+    export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
+fi
+export PATH=/opt/dropbox-override/bin:$PATH
 
 # disable special creation/extraction of ._* files by tar, etc. on Mac OS X
 export COPYFILE_DISABLE=1
 
 # for "lukechilds/zsh-nvm"
-export NVM_LAZY_LOAD=true
+# export NVM_LAZY_LOAD=true
 
 # solarized ls color
 export CLICOLOR=1
@@ -37,10 +47,22 @@ export LS_COLORS="di=1;35:ln=35:so=31;1;44:pi=30;1;44:ex=1;31:bd=0;1;44:cd=37;1;
 
 if [[ $OS == "Darwin" ]]; then
     export SHELL=/usr/local/bin/zsh
+    export s=/Users/poning/src/server
+    export GOPATH=$GOPATH:/Users/poning/src/server/go
+    # DocSend
+    export PGHOST=localhost
 fi
 
 if [[ $OS == "Linux" ]]; then
     export LD_LIBRARY_PATH=/lib:/usr/lib:/usr/local/lib
+fi
+
+# DocSend
+export RBENV_ROOT="${HOME}/.rbenv"
+
+if [ -d "${RBENV_ROOT}" ]; then
+  export PATH="${RBENV_ROOT}/bin:${PATH}"
+  eval "$(rbenv init -)"
 fi
 
 ################################################################################
@@ -48,13 +70,14 @@ fi
 ################################################################################
 if [[ $OS == "Darwin" ]]; then
     alias shuf='gshuf'
+    alias timeout='gtimeout'
     alias ls='ls -FH'
     alias ll='ls -Fla'
     alias tab='open . -a iterm'
     alias ssh='ssh -o "XAuthLocation=/opt/X11/bin/xauth"'
     alias airport='/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport'
     alias fuck-mac='find . -name ".DS_Store" -type f -delete'
-    alias python=python2
+    alias python=python3
 fi
 
 if [[ $OS == "Linux" ]]; then
@@ -188,11 +211,14 @@ fi
 ################################################################################
 #                                    zplug                                     #
 ################################################################################
+alias git=/usr/local/bin/git
 source ~/.zplug/init.zsh
+unalias git
 
 zplug "lukechilds/zsh-nvm"
 zplug "Isaac0616/emoticon-zsh-theme", as:theme
 zplug "zsh-users/zsh-completions"
+zplug "plugins/gitfast", from:oh-my-zsh
 zplug "zsh-users/zsh-syntax-highlighting", defer:2
 zplug 'zplug/zplug', hook-build:'zplug --self-manage'
 
@@ -270,9 +296,14 @@ bindkey -v
 export KEYTIMEOUT=1
 
 ## bindkey
+# history
 bindkey '^R' history-incremental-search-backward
 bindkey -M vicmd '/' history-incremental-search-backward
 bindkey -M vicmd '?' history-incremental-search-forward
+# edit command line
+autoload edit-command-line;
+zle -N edit-command-line
+bindkey -M vicmd '^v' edit-command-line
 
 # bind arrow key
 autoload -U up-line-or-beginning-search
@@ -289,6 +320,9 @@ bindkey "\eOB" down-line-or-beginning-search
 ################################################################################
 #                                   plugins                                    #
 ################################################################################
+# gitfast
+export GIT_COMPLETION_CHECKOUT_NO_GUESS=1
+
 # the fuck
 fuck () {
     unset -f fuck
@@ -298,7 +332,8 @@ fuck () {
 
 # fasd
 if [[ $OS == "Darwin" ]]; then
-    export _FASD_BACKENDS="native spotlight"
+    # export _FASD_BACKENDS="native spotlight"
+    export _FASD_BACKENDS="native"
 fi
 fasd_cache="$HOME/.fasd-init-zsh"
 if [ "$(command -v fasd)" -nt "$fasd_cache" -o ! -s "$fasd_cache" ]; then
@@ -400,3 +435,9 @@ j() {
     local dir
     dir="$(fasd -Rdl "$1" | fzf -1 -0 --no-sort +m)" && cd "${dir}" || return 1
 }
+
+headers() {
+  curl -s -o /dev/null -D - "$@" | grep -v -e '^[[:space:]]*$' | tail -n +2 | sort --ignore-case
+}
+
+# zprof

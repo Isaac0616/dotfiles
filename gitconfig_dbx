@@ -1,6 +1,6 @@
 [user]
-	name = "Po-Ning Tseng"
-	email = "poning.tseng@gmail.com"
+	name = Po-Ning Tseng
+	email = poning@dropbox.com
 [color]
 	ui = true
 [core]
@@ -16,3 +16,5 @@
     rank = shortlog -sn --no-merges
 	cof = !git for-each-ref --format='%(refname:short)' refs/heads | fzf | xargs git checkout
 	shw = show --pretty='%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cd) %C(bold blue)<%an>%Creset' -s --date='format-local:%Y-%m-%d %H:%M:%S'
+[dbx]
+	messagedisplayversion = 1
