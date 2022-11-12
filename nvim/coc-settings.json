@@ -1,0 +1,48 @@
+{
+  "python.linting.flake8Enabled": true,
+  "pyright.organizeimports.provider": "isort",
+  "python.pythonPath": "/usr/local/bin/python3",
+  "python.sortImports.args": [
+    "--settings-path=/Users/poning/.dotfiles/.isort.cfg"
+  ],
+  "python.formatting.provider": "black",
+  "diagnostic.errorSign": "✘",
+  "diagnostic.warningSign": "",
+  "diagnostic.infoSign": "",
+  "diagnostic.hintSign": "•"
+  // "languageserver": {
+  //   "semgrep": {
+  //     "command": "semgrep",
+  //     "args": ["lsp", "--verbose", "--debug"],
+  //     "filetypes": ["*"],
+  //     "initializationOptions": {
+  //       "logging": true,
+  //       "scan": {
+  //         "configuration": ["~/src/server/dropbox/security/reviewer_service/reviewer_rules/"],
+  //         "jobs": 4
+  //       },
+  //       "lsp": {
+  //         "watchWorkspace": false,
+  //         "watchConfigs": false,
+  //         "autodetectConfigs": false,
+  //         "ciEnabled": false
+  //       },
+  //       "metrics": "off"
+  //     },
+  //     "settings": {
+  //       "logging": true,
+  //       "scan": {
+  //         "configuration": ["~/src/server/dropbox/security/reviewer_service/reviewer_rules/"],
+  //         "jobs": 4
+  //       },
+  //       "lsp": {
+  //         "watchWorkspace": false,
+  //         "watchConfigs": false,
+  //         "autodetectConfigs": false,
+  //         "ciEnabled": false
+  //       },
+  //       "metrics": "off"
+  //     }
+  //   }
+  // }
+}
