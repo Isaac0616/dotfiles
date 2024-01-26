@@ -3,15 +3,15 @@
 ################################################################################
 #                             launch tmux when ssh                             #
 ################################################################################
-if [[ -z "$TMUX" ]] && [ -n "$SSH_CONNECTION" ] && [ -t 1 ] && which tmux >& /dev/null; then
-    exec tmux-next new -As main
-fi
+# if [[ -z "$TMUX" ]] && [ -n "$SSH_CONNECTION" ] && [ -t 1 ] && which tmux >& /dev/null; then
+    # exec tmux-next new -As main
+# fi
 
 ################################################################################
 #                            environment variables                             #
 ################################################################################
 export OS=$(uname)
-export GOROOT=/usr/local/opt/go/libexec
+export GOROOT=$HOMEBREW_PREFIX/opt/go/libexec
 export GOPATH=$HOME/go
 export LC_CTYPE=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
@@ -25,6 +25,7 @@ if [[ $OS == "Linux" ]]; then
 fi
 if [[ $OS == "Darwin" ]]; then
     export PATH=/usr/local/opt/ruby/bin:$PATH
+    export PATH=$HOME/.cargo/bin:$PATH
     export PATH=`gem environment gemdir`/bin:$PATH
     # DocSend
     export PATH="$HOMEBREW_PREFIX/opt/imagemagick@6/bin:$PATH"
@@ -271,8 +272,8 @@ sched 0 _set-list-colors  # deferred since LC_COLORS might not be available yet
 
 ## command history
 HISTFILE=$HOME/.zsh_history
-HISTSIZE=10000
-SAVEHIST=10000
+HISTSIZE=1000000
+SAVEHIST=1000000
 
 setopt append_history # append to history file instead of replacing it
 setopt extended_history # save each command’s beginning timestamp and the duration to the history file

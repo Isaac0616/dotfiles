@@ -20,6 +20,7 @@ set backup
 set backupdir=~/.local/share/nvim/backup
 " set splitright
 set virtualedit=block
+set mouse=
 
 
 " move vertically by visual line
@@ -196,7 +197,7 @@ Plug 'scrooloose/nerdtree'
 Plug 'Lokaltog/vim-easymotion'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-Plug 'jiangmiao/auto-pairs'
+" Plug 'jiangmiao/auto-pairs'
 Plug 'majutsushi/tagbar'
 Plug 'vim-scripts/mru.vim'
 Plug 'vim-scripts/YankRing.vim'
@@ -260,6 +261,10 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " Plug 'tpope/vim-fugitive'
 
 " Plug 'edkolev/tmuxline.vim'
+
+Plug 'github/copilot.vim'
+
+Plug 'windwp/nvim-autopairs'
 
 call plug#end()
 
@@ -425,10 +430,28 @@ nmap <silent> [g <Plug>(coc-diagnostic-prev)
 nmap <silent> ]g <Plug>(coc-diagnostic-next)
 
 " GoTo code navigation.
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
+" nmap <silent> gd <Plug>(coc-definition)
+" nmap <silent> gy <Plug>(coc-type-definition)
+" nmap <silent> gi <Plug>(coc-implementation)
+" nmap <silent> gr <Plug>(coc-references)
+
+" Copied from https://github.com/neoclide/coc.nvim/issues/1054
+function! s:goto_tag(tagkind) abort
+  let tagname = expand('<cWORD>')
+  let winnr = winnr()
+  let pos = getcurpos()
+  let pos[0] = bufnr()
+
+  if CocAction('jump' . a:tagkind)
+    call settagstack(winnr, {
+      \ 'curidx': gettagstack()['curidx'],
+      \ 'items': [{'tagname': tagname, 'from': pos}]
+      \ }, 't')
+  endif
+endfunction
+nmap <silent> gd :call <SID>goto_tag("Definition")<CR>
+nmap <silent> gi :call <SID>goto_tag("Implementation")<CR>
+nmap <silent> gr :call <SID>goto_tag("References")<CR>
 
 " Symbol renaming.
 nmap <leader>rn <Plug>(coc-rename)
@@ -444,6 +467,7 @@ function! ShowDocumentation()
   endif
 endfunction
 
+
 " Use tab for trigger completion with characters ahead and navigate.
 " NOTE: There's always complete item selected by default, you may want to enable
 " no select by `"suggest.noselect": true` in your configuration file.
@@ -457,8 +481,8 @@ inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
 
 " Make <CR> to accept selected completion item or notify coc.nvim to format
 " <C-g>u breaks current undo, please make your own choice.
-" inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
-                              " \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+" inoremap <silent><expr> <cr> coc#pum#visible() ? coc#pum#confirm()
+                              " \: "\<c-g>u\<cr>\<c-r>=coc#on_enter()\<cr>"
 
 function! CheckBackspace() abort
   let col = col('.') - 1
@@ -551,3 +575,18 @@ function! SGLink() range
 endfunction
 nnoremap <leader>sg :call SGLink()<cr>
 vnoremap <leader>sg :call SGLink()<cr>
+
+" auto-pairs
+let g:AutoPairsMoveCharacter = ""
+
+" copilot
+imap <script><expr> <C-J> copilot#Accept("\<CR>")
+let g:copilot_no_tab_map = v:true
+
+" nvim-autopairs
+lua << EOF
+local npairs = require("nvim-autopairs")
+npairs.setup({
+    fast_wrap = {},
+})
+EOF

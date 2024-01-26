@@ -1,7 +1,9 @@
 {
+  "suggest.noselect": true,
   "python.linting.flake8Enabled": true,
   "pyright.organizeimports.provider": "isort",
-  "python.pythonPath": "/usr/local/bin/python3",
+  "python.analysis.autoImportCompletions": false,
+  "python.pythonPath": "/opt/homebrew/bin/python3",
   "python.sortImports.args": [
     "--settings-path=/Users/poning/.dotfiles/.isort.cfg"
   ],
